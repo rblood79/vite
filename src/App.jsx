@@ -5,6 +5,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 //import AuthForm from "./AuthForm";
 //import LoginForm from "./LoginForm";
 
+
 const supabase = createClient("https://bndjecsgiowpherjagbx.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuZGplY3NnaW93cGhlcmphZ2J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxMTI5MDYsImV4cCI6MjA1NTY4ODkwNn0.iDcIgOAjny8v2Sx8Hj_ChEhK0vMRLuJo3ItybQRC2qQ");
 
 function App() {
