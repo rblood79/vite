@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient("https://bndjecsgiowpherjagbx.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuZGplY3NnaW93cGhlcmphZ2J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAxMTI5MDYsImV4cCI6MjA1NTY4ODkwNn0.iDcIgOAjny8v2Sx8Hj_ChEhK0vMRLuJo3ItybQRC2qQ");
+const supabase = createClient(
+  "http://121.146.229.198:8000", 
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzQxMTAwNDAwLAogICJleHAiOiAxODk4ODY2ODAwCn0.-ecQE0vNhNZE6kNt2nBZlcTkQhUtKgOWqFfGrBWH38g"
+);
 
 function LoginForm() {
   const [email, setEmail] = useState('');
