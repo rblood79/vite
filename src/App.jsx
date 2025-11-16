@@ -5,44 +5,89 @@ function Card({ title, info, chartData, tableData }) {
   return (
     <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 hover:shadow-xl transition-shadow">
       {/* Card Title */}
-      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-4">
+      <div className="bg-slate-700 px-6 py-4">
         <h2 className="text-white text-xl font-bold">{title}</h2>
       </div>
 
-      {/* Info Section */}
-      <div className="bg-slate-750 border-b border-slate-600">
-        <div className="grid grid-cols-2 divide-x divide-slate-600">
-          {info.map((item, idx) => (
-            <div key={idx} className="px-4 py-3">
-              <div className="text-xs text-slate-400 mb-1">{item.label}</div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-slate-200">{item.value}</span>
-                <span className="text-xs text-slate-300">{item.unit}</span>
-              </div>
+      {/* Info Section - 6 columns x 2 rows */}
+      <div className="bg-slate-750 border-b border-slate-600 px-6 py-3">
+        {info.map((item, idx) => (
+          <div key={idx}>
+            {/* Row 1 */}
+            <div className="flex items-center gap-1 mb-2 text-xs">
+              <span className="text-slate-400 font-medium w-8">{item.label}</span>
+              <span className="text-slate-300 w-16 truncate">{item.title1}</span>
+              <span className="text-blue-300 font-medium flex-1 text-center">{item.value1}</span>
+              <span className="text-slate-400 font-medium w-8">{item.label2}</span>
+              <span className="text-slate-300 w-16 truncate">{item.title2}</span>
+              <span className="text-blue-300 font-medium flex-1 text-center">{item.value2}</span>
             </div>
-          ))}
-        </div>
+            {/* Row 2 */}
+            <div className="flex items-center gap-1 text-xs">
+              <span className="text-slate-500 w-8">기준</span>
+              <span className="text-slate-400 w-16 truncate">{item.detail1}</span>
+              <span className="text-slate-300 flex-1 text-center">{item.detailValue1}</span>
+              <span className="text-slate-500 w-8">기준</span>
+              <span className="text-slate-400 w-16 truncate">{item.detail2}</span>
+              <span className="text-slate-300 flex-1 text-center">{item.detailValue2}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Chart Section */}
-      <div className="px-6 py-6 h-48 flex items-end justify-between gap-2 bg-gradient-to-br from-slate-800 to-slate-700">
-        {chartData.map((data, idx) => {
-          const maxValue = Math.max(...data.values);
-          return (
-            <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-              <div className="w-full flex items-end justify-center gap-1 h-32">
-                {data.values.map((val, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 bg-gradient-to-t from-violet-500 to-indigo-400 rounded-t opacity-70 hover:opacity-100 transition-opacity"
-                    style={{ height: `${(val / maxValue) * 100}%` }}
-                  ></div>
-                ))}
+      <div className="px-6 py-6 flex items-end justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+        {/* Chart */}
+        <div className="flex-1 h-48 flex items-end justify-between gap-2">
+          {chartData.map((data, idx) => {
+            const maxTotalValue = Math.max(...chartData.map(d => d.values.reduce((sum, val) => sum + val, 0)));
+            const colors = [
+              'bg-violet-600',
+              'bg-indigo-600',
+              'bg-purple-500',
+              'bg-pink-500',
+            ];
+            return (
+              <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                <div className="w-full relative h-32 flex items-end">
+                  <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                    {data.values.map((val, i) => {
+                      const percentage = (val / maxTotalValue) * 100;
+                      return (
+                        <div
+                          key={i}
+                          className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
+                          style={{ height: `${percentage}%` }}
+                        ></div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <span className="text-xs text-slate-400 text-center">{data.date}</span>
               </div>
-              <span className="text-xs text-slate-400 text-center">{data.date}</span>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-violet-600 rounded"></div>
+            <span className="text-xs text-slate-300">Data 1</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-indigo-600 rounded"></div>
+            <span className="text-xs text-slate-300">Data 2</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-purple-500 rounded"></div>
+            <span className="text-xs text-slate-300">Data 3</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-pink-500 rounded"></div>
+            <span className="text-xs text-slate-300">Data 4</span>
+          </div>
+        </div>
       </div>
 
       {/* Table Section */}
@@ -67,8 +112,15 @@ Card.propTypes = {
   info: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-      unit: PropTypes.string.isRequired,
+      title1: PropTypes.string.isRequired,
+      value1: PropTypes.string.isRequired,
+      label2: PropTypes.string.isRequired,
+      title2: PropTypes.string.isRequired,
+      value2: PropTypes.string.isRequired,
+      detail1: PropTypes.string.isRequired,
+      detailValue1: PropTypes.string.isRequired,
+      detail2: PropTypes.string.isRequired,
+      detailValue2: PropTypes.string.isRequired,
     })
   ).isRequired,
   chartData: PropTypes.arrayOf(
@@ -91,8 +143,12 @@ function App() {
       id: 1,
       title: "OCP Rate",
       info: [
-        { label: "종류", value: "계수", unit: "714,125건/1,424,523건" },
-        { label: "기준", value: "2년수", unit: "15,250건/26,110건" }
+        { 
+          label: "누적", title1: "OCP Rate", value1: "50%", 
+          label2: "일", title2: "OCP Rate", value2: "58%",
+          detail1: "건수", detailValue1: "232,345건 / 1,234,534",
+          detail2: "건수", detailValue2: "232,345건 / 1,234,534"
+        }
       ],
       chartData: [
         { date: "11-09", values: [50, 100, 80, 120] },
@@ -113,8 +169,12 @@ function App() {
       id: 2,
       title: "OCP",
       info: [
-        { label: "종류", value: "계수", unit: "58%" },
-        { label: "기준", value: "2년수", unit: "58%" }
+        { 
+          label: "누적", title1: "OCP", value1: "58%", 
+          label2: "일", title2: "OCP", value2: "58%",
+          detail1: "건수", detailValue1: "232,345건 / 1,234,534",
+          detail2: "건수", detailValue2: "232,345건 / 1,234,534"
+        }
       ],
       chartData: [
         { date: "11-09", values: [40, 80, 60, 100] },
@@ -135,8 +195,12 @@ function App() {
       id: 3,
       title: "Quality Score",
       info: [
-        { label: "종류", value: "계수", unit: "92%" },
-        { label: "기준", value: "목표", unit: "95%" }
+        { 
+          label: "누적", title1: "Quality Score", value1: "92%", 
+          label2: "일", title2: "Quality Score", value2: "95%",
+          detail1: "건수", detailValue1: "232,345건 / 1,234,534",
+          detail2: "건수", detailValue2: "232,345건 / 1,234,534"
+        }
       ],
       chartData: [
         { date: "11-09", values: [70, 110, 95, 140] },
@@ -157,8 +221,12 @@ function App() {
       id: 4,
       title: "Yield Rate",
       info: [
-        { label: "종류", value: "계수", unit: "87%" },
-        { label: "기준", value: "목표", unit: "90%" }
+        { 
+          label: "누적", title1: "Yield Rate", value1: "87%", 
+          label2: "일", title2: "Yield Rate", value2: "90%",
+          detail1: "건수", detailValue1: "232,345건 / 1,234,534",
+          detail2: "건수", detailValue2: "232,345건 / 1,234,534"
+        }
       ],
       chartData: [
         { date: "11-09", values: [45, 85, 70, 115] },
@@ -179,8 +247,12 @@ function App() {
       id: 5,
       title: "Defect Rate",
       info: [
-        { label: "종류", value: "계수", unit: "2.3%" },
-        { label: "기준", value: "목표", unit: "1.5%" }
+        { 
+          label: "누적", title1: "Defect Rate", value1: "2.3%", 
+          label2: "일", title2: "Defect Rate", value2: "1.5%",
+          detail1: "건수", detailValue1: "232,345건 / 1,234,534",
+          detail2: "건수", detailValue2: "232,345건 / 1,234,534"
+        }
       ],
       chartData: [
         { date: "11-09", values: [30, 70, 50, 90] },
@@ -201,8 +273,12 @@ function App() {
       id: 6,
       title: "Efficiency",
       info: [
-        { label: "종류", value: "계수", unit: "96.5%" },
-        { label: "기준", value: "목표", unit: "98%" }
+        { 
+          label: "누적", title1: "Efficiency", value1: "96.5%", 
+          label2: "일", title2: "Efficiency", value2: "98%",
+          detail1: "건수", detailValue1: "232,345건 / 1,234,534",
+          detail2: "건수", detailValue2: "232,345건 / 1,234,534"
+        }
       ],
       chartData: [
         { date: "11-09", values: [80, 120, 105, 155] },
@@ -242,8 +318,8 @@ function App() {
           </button>
         </div>
 
-        {/* Cards Grid - 3 columns x 2 rows */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
           {cardConfigs.map((config) => (
             <Card
               key={config.id}
