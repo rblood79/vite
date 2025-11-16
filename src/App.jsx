@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 // Card Component
 function Card({ title, info, chartData, tableData }) {
   return (
@@ -59,6 +61,29 @@ function Card({ title, info, chartData, tableData }) {
     </div>
   );
 }
+
+Card.propTypes = {
+  title: PropTypes.string.isRequired,
+  info: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      unit: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  chartData: PropTypes.arrayOf(
+    PropTypes.shape({
+      date: PropTypes.string.isRequired,
+      values: PropTypes.arrayOf(PropTypes.number).isRequired,
+    })
+  ).isRequired,
+  tableData: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
 
 function App() {
   const cardConfigs = [
@@ -202,7 +227,7 @@ function App() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-5xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-slate-400 text-lg">Welcome back! Here's your analytics overview.</p>
+          <p className="text-slate-400 text-lg">Welcome back! Here&apos;s your analytics overview.</p>
         </div>
 
         {/* Alarm Area */}
