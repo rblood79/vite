@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 // Card Component
 function Card({ title, info, chartData, tableData }) {
   return (
-    <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+    <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 hover:shadow-xl transition-shadow">
       {/* Card Title */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+      <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-4">
         <h2 className="text-white text-xl font-bold">{title}</h2>
       </div>
 
@@ -25,7 +25,7 @@ function Card({ title, info, chartData, tableData }) {
       </div>
 
       {/* Chart Section */}
-      <div className="px-6 py-6 h-48 flex items-end justify-between gap-2">
+      <div className="px-6 py-6 h-48 flex items-end justify-between gap-2 bg-gradient-to-br from-slate-800 to-slate-700">
         {chartData.map((data, idx) => {
           const maxValue = Math.max(...data.values);
           return (
@@ -34,7 +34,7 @@ function Card({ title, info, chartData, tableData }) {
                 {data.values.map((val, i) => (
                   <div
                     key={i}
-                    className="flex-1 bg-gradient-to-t from-blue-400 to-blue-600 rounded-t opacity-70 hover:opacity-100 transition-opacity"
+                    className="flex-1 bg-gradient-to-t from-violet-500 to-indigo-400 rounded-t opacity-70 hover:opacity-100 transition-opacity"
                     style={{ height: `${(val / maxValue) * 100}%` }}
                   ></div>
                 ))}
@@ -50,7 +50,7 @@ function Card({ title, info, chartData, tableData }) {
         <table className="w-full text-sm">
           <tbody>
             {tableData.map((row, idx) => (
-              <tr key={idx} className="border-b border-slate-600 last:border-b-0">
+              <tr key={idx} className="border-b border-slate-600 last:border-b-0 hover:bg-slate-700/50 transition-colors">
                 <td className="px-4 py-3 text-slate-300 font-medium w-20">{row.label}</td>
                 <td className="px-4 py-3 text-slate-200">{row.value}</td>
               </tr>
@@ -222,7 +222,7 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 p-8">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -231,7 +231,7 @@ function App() {
         </div>
 
         {/* Alarm Area */}
-        <div className="mb-8 bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/50 rounded-lg p-4 flex items-center gap-4">
+        <div className="mb-8 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-red-700/50 rounded-lg p-4 flex items-center gap-4">
           <div className="text-2xl">⚠️</div>
           <div className="flex-1">
             <h3 className="text-red-300 font-semibold mb-1">Alert: System Notification</h3>
@@ -257,15 +257,15 @@ function App() {
 
         {/* Footer Stats */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
             <p className="text-slate-400 mb-2">Last Updated</p>
             <p className="text-white text-2xl font-semibold">Just now</p>
           </div>
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
             <p className="text-slate-400 mb-2">Status</p>
-            <p className="text-green-400 text-2xl font-semibold">✓ All Systems Operational</p>
+            <p className="text-emerald-400 text-2xl font-semibold">✓ All Systems Operational</p>
           </div>
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
             <p className="text-slate-400 mb-2">Uptime</p>
             <p className="text-white text-2xl font-semibold">99.9%</p>
           </div>
