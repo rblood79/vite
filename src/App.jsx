@@ -2,16 +2,16 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Card Component
-function Card({ title, info, chartData, tableData }) {
+function Card({ title, info, chartData, tableData, barChartData }) {
   return (
     <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700 hover:shadow-xl transition-shadow">
       {/* Card Title */}
-      <div className="bg-slate-700 px-6 py-4">
-        <h2 className="text-white text-xl font-bold">{title}</h2>
+      <div className="bg-slate-700 px-4 py-2">
+        <h2 className="text-white text-md font-bold">{title}</h2>
       </div>
 
       {/* Info Section - 6 columns x 2 rows */}
-      <div className="bg-slate-750 border-b border-slate-600 px-6 py-3">
+      <div className="bg-slate-750 border-b border-slate-600 px-4 py-2">
         {info.map((item, idx) => (
           <div key={idx}>
             {/* Row 1 */}
@@ -37,16 +37,17 @@ function Card({ title, info, chartData, tableData }) {
       </div>
 
       {/* Chart Section */}
-      <div className="px-6 py-6 flex items-end justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+      <div className="px-4 py-4 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
         {/* Chart */}
         <div className="flex-1 h-48 flex items-end justify-between gap-2">
           {chartData.map((data, idx) => {
             const maxTotalValue = Math.max(...chartData.map(d => d.values.reduce((sum, val) => sum + val, 0)));
             const colors = [
-              'bg-violet-600',
-              'bg-indigo-600',
-              'bg-purple-500',
-              'bg-pink-500',
+              'bg-sky-400',
+              'bg-blue-400',
+              'bg-yellow-400',
+              'bg-orange-400',
+              'bg-green-400',
             ];
             return (
               <div key={idx} className="flex-1 flex flex-col items-center gap-2">
@@ -73,37 +74,68 @@ function Card({ title, info, chartData, tableData }) {
         {/* Legend */}
         <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-violet-600 rounded"></div>
+            <div className="w-3 h-3 bg-sky-400 rounded"></div>
             <span className="text-xs text-slate-300">Data 1</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-indigo-600 rounded"></div>
+            <div className="w-3 h-3 bg-blue-400 rounded"></div>
             <span className="text-xs text-slate-300">Data 2</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-purple-500 rounded"></div>
+            <div className="w-3 h-3 bg-yellow-400 rounded"></div>
             <span className="text-xs text-slate-300">Data 3</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-pink-500 rounded"></div>
+            <div className="w-3 h-3 bg-orange-400 rounded"></div>
             <span className="text-xs text-slate-300">Data 4</span>
           </div>
         </div>
       </div>
 
-      {/* Table Section */}
-      <div className="bg-slate-700/50 border-t border-slate-600">
-        <table className="w-full text-sm">
-          <tbody>
-            {tableData.map((row, idx) => (
-              <tr key={idx} className="border-b border-slate-600 last:border-b-0 hover:bg-slate-700/50 transition-colors">
-                <td className="px-4 py-3 text-slate-300 font-medium w-20">{row.label}</td>
-                <td className="px-4 py-3 text-slate-200">{row.value}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Bar Chart Section (Product Ranking) */}
+      {barChartData && barChartData.length > 0 ? (
+        <div className="px-4 py-4 border-t border-slate-600 bg-slate-750">
+          <div className="flex items-end justify-between gap-2 relative" style={{ height: '8rem' }}>
+            {/* Horizontal Grid Lines */}
+            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+              <div className="border-t border-slate-600/30 w-full"></div>
+              <div className="border-t border-slate-600/30 w-full"></div>
+              <div className="border-t border-slate-600/30 w-full"></div>
+              <div className="border-t border-slate-600/30 w-full"></div>
+            </div>
+            
+            {barChartData.map((item, idx) => {
+              const maxValue = Math.max(...barChartData.map(d => d.value));
+              const percentage = (item.value / maxValue) * 100;
+              return (
+                <div key={idx} className="flex flex-col items-center flex-1 pt-6 pb-0 relative z-10">
+                  <span className="text-xs text-slate-300 mb-1 flex-shrink-0">{item.value}%</span>
+                  <div className="w-1/2 bg-slate-600 rounded-t flex items-end justify-center overflow-hidden" style={{ height: `${percentage * 3}px`, maxHeight: '60px' }}>
+                    <div
+                      className={`w-full ${item.color} transition-all`}
+                      style={{ height: '100%' }}
+                    ></div>
+                  </div>
+                  <span className="text-xs text-slate-300 mt-1 truncate w-full text-center flex-shrink-0">{item.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-slate-700/50 border-t border-slate-600">
+          <table className="w-full text-sm">
+            <tbody>
+              {tableData.map((row, idx) => (
+                <tr key={idx} className="border-b border-slate-600 last:border-b-0 hover:bg-slate-700/50 transition-colors">
+                  <td className="px-4 py-3 text-slate-300 font-medium w-20">{row.label}</td>
+                  <td className="px-4 py-3 text-slate-200">{row.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
@@ -136,6 +168,13 @@ Card.propTypes = {
       value: PropTypes.string.isRequired,
     })
   ).isRequired,
+  barChartData: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
+      color: PropTypes.string.isRequired,
+    })
+  ),
 };
 
 function App() {
@@ -163,22 +202,29 @@ function App() {
       id: 1,
       title: "OCP Rate",
       info: [
-        { 
-          label: "누적", title1: "OCP Rate", value1: "50%", 
+        {
+          label: "누적", title1: "OCP Rate", value1: "50%",
           label2: "일", title2: "OCP Rate", value2: "58%",
           detail1: "건수", detailValue1: "232,345건 / 1,234,534",
           detail2: "건수", detailValue2: "232,345건 / 1,234,534"
         }
       ],
       chartData: [
-        { date: "11-09", values: [50, 100, 80, 120] },
-        { date: "11-10", values: [60, 110, 90, 130] },
-        { date: "11-11", values: [55, 105, 85, 125] },
-        { date: "11-12", values: [65, 115, 95, 135] },
-        { date: "12-11", values: [70, 120, 100, 140] },
-        { date: "13-11", values: [75, 125, 105, 145] },
-        { date: "14-11", values: [80, 130, 110, 150] },
-        { date: "14-15", values: [85, 135, 115, 155] }
+        { date: "11-09", values: [45, 95, 72, 110] },
+        { date: "11-10", values: [58, 108, 88, 128] },
+        { date: "11-11", values: [52, 102, 80, 122] },
+        { date: "11-12", values: [68, 118, 98, 138] },
+        { date: "12-11", values: [75, 125, 105, 145] },
+        { date: "13-11", values: [82, 132, 112, 152] },
+        { date: "14-11", values: [88, 138, 118, 158] },
+        { date: "14-15", values: [92, 142, 122, 162] }
+      ],
+      barChartData: [
+        { label: "품질 완목", value: 85, color: "bg-blue-600" },
+        { label: "1순위", value: 92, color: "bg-blue-500" },
+        { label: "2순위", value: 78, color: "bg-blue-400" },
+        { label: "3순위", value: 65, color: "bg-blue-300" },
+        { label: "4순위", value: 51, color: "bg-blue-200" }
       ],
       tableData: [
         { label: "제품명", value: "STML283T" },
@@ -189,22 +235,29 @@ function App() {
       id: 2,
       title: "OCP",
       info: [
-        { 
-          label: "누적", title1: "OCP", value1: "58%", 
+        {
+          label: "누적", title1: "OCP", value1: "58%",
           label2: "일", title2: "OCP", value2: "58%",
           detail1: "건수", detailValue1: "232,345건 / 1,234,534",
           detail2: "건수", detailValue2: "232,345건 / 1,234,534"
         }
       ],
       chartData: [
-        { date: "11-09", values: [40, 80, 60, 100] },
-        { date: "11-10", values: [50, 90, 70, 110] },
-        { date: "11-11", values: [45, 85, 65, 105] },
-        { date: "11-12", values: [55, 95, 75, 115] },
-        { date: "12-11", values: [60, 100, 80, 120] },
-        { date: "13-11", values: [65, 105, 85, 125] },
-        { date: "14-11", values: [70, 110, 90, 130] },
-        { date: "14-15", values: [75, 115, 95, 135] }
+        { date: "11-09", values: [38, 78, 56, 95] },
+        { date: "11-10", values: [48, 88, 68, 105] },
+        { date: "11-11", values: [42, 82, 62, 100] },
+        { date: "11-12", values: [52, 92, 72, 112] },
+        { date: "12-11", values: [58, 98, 78, 118] },
+        { date: "13-11", values: [64, 104, 84, 124] },
+        { date: "14-11", values: [72, 112, 92, 132] },
+        { date: "14-15", values: [80, 120, 100, 140] }
+      ],
+      barChartData: [
+        { label: "기준값", value: 84, color: "bg-sky-400" },
+        { label: "1순위", value: 91, color: "bg-blue-400" },
+        { label: "2순위", value: 79, color: "bg-yellow-400" },
+        { label: "3순위", value: 67, color: "bg-orange-400" },
+        { label: "4순위", value: 55, color: "bg-green-400" }
       ],
       tableData: [
         { label: "제품명", value: "STML283T" },
@@ -215,22 +268,29 @@ function App() {
       id: 3,
       title: "Quality Score",
       info: [
-        { 
-          label: "누적", title1: "Quality Score", value1: "92%", 
+        {
+          label: "누적", title1: "Quality Score", value1: "92%",
           label2: "일", title2: "Quality Score", value2: "95%",
           detail1: "건수", detailValue1: "232,345건 / 1,234,534",
           detail2: "건수", detailValue2: "232,345건 / 1,234,534"
         }
       ],
       chartData: [
-        { date: "11-09", values: [70, 110, 95, 140] },
-        { date: "11-10", values: [75, 115, 100, 145] },
-        { date: "11-11", values: [72, 112, 97, 142] },
-        { date: "11-12", values: [78, 118, 103, 148] },
-        { date: "12-11", values: [80, 120, 105, 150] },
-        { date: "13-11", values: [82, 122, 107, 152] },
-        { date: "14-11", values: [85, 125, 110, 155] },
-        { date: "14-15", values: [88, 128, 113, 158] }
+        { date: "11-09", values: [68, 105, 92, 138] },
+        { date: "11-10", values: [73, 115, 102, 147] },
+        { date: "11-11", values: [70, 110, 98, 143] },
+        { date: "11-12", values: [76, 120, 105, 152] },
+        { date: "12-11", values: [82, 128, 112, 160] },
+        { date: "13-11", values: [85, 132, 116, 164] },
+        { date: "14-11", values: [88, 136, 120, 168] },
+        { date: "14-15", values: [91, 140, 124, 172] }
+      ],
+      barChartData: [
+        { label: "기준값", value: 94, color: "bg-sky-400" },
+        { label: "1순위", value: 97, color: "bg-blue-400" },
+        { label: "2순위", value: 89, color: "bg-yellow-400" },
+        { label: "3순위", value: 83, color: "bg-orange-400" },
+        { label: "4순위", value: 76, color: "bg-green-400" }
       ],
       tableData: [
         { label: "제품명", value: "EDGE" },
@@ -241,22 +301,29 @@ function App() {
       id: 4,
       title: "Yield Rate",
       info: [
-        { 
-          label: "누적", title1: "Yield Rate", value1: "87%", 
+        {
+          label: "누적", title1: "Yield Rate", value1: "87%",
           label2: "일", title2: "Yield Rate", value2: "90%",
           detail1: "건수", detailValue1: "232,345건 / 1,234,534",
           detail2: "건수", detailValue2: "232,345건 / 1,234,534"
         }
       ],
       chartData: [
-        { date: "11-09", values: [45, 85, 70, 115] },
-        { date: "11-10", values: [50, 90, 75, 120] },
-        { date: "11-11", values: [48, 88, 73, 118] },
-        { date: "11-12", values: [55, 95, 80, 125] },
-        { date: "12-11", values: [58, 98, 83, 128] },
-        { date: "13-11", values: [60, 100, 85, 130] },
-        { date: "14-11", values: [62, 102, 87, 132] },
-        { date: "14-15", values: [65, 105, 90, 135] }
+        { date: "11-09", values: [42, 82, 68, 112] },
+        { date: "11-10", values: [48, 88, 74, 118] },
+        { date: "11-11", values: [45, 85, 71, 115] },
+        { date: "11-12", values: [53, 93, 79, 123] },
+        { date: "12-11", values: [60, 100, 86, 130] },
+        { date: "13-11", values: [65, 105, 91, 135] },
+        { date: "14-11", values: [70, 110, 96, 140] },
+        { date: "14-15", values: [76, 116, 102, 146] }
+      ],
+      barChartData: [
+        { label: "기준값", value: 89, color: "bg-sky-400" },
+        { label: "1순위", value: 92, color: "bg-blue-400" },
+        { label: "2순위", value: 86, color: "bg-yellow-400" },
+        { label: "3순위", value: 78, color: "bg-orange-400" },
+        { label: "4순위", value: 70, color: "bg-green-400" }
       ],
       tableData: [
         { label: "제품명", value: "BULK" },
@@ -267,22 +334,29 @@ function App() {
       id: 5,
       title: "Defect Rate",
       info: [
-        { 
-          label: "누적", title1: "Defect Rate", value1: "2.3%", 
+        {
+          label: "누적", title1: "Defect Rate", value1: "2.3%",
           label2: "일", title2: "Defect Rate", value2: "1.5%",
           detail1: "건수", detailValue1: "232,345건 / 1,234,534",
           detail2: "건수", detailValue2: "232,345건 / 1,234,534"
         }
       ],
       chartData: [
-        { date: "11-09", values: [30, 70, 50, 90] },
-        { date: "11-10", values: [35, 75, 55, 95] },
-        { date: "11-11", values: [32, 72, 52, 92] },
-        { date: "11-12", values: [38, 78, 58, 98] },
-        { date: "12-11", values: [40, 80, 60, 100] },
-        { date: "13-11", values: [42, 82, 62, 102] },
-        { date: "14-11", values: [44, 84, 64, 104] },
-        { date: "14-15", values: [46, 86, 66, 106] }
+        { date: "11-09", values: [28, 68, 48, 88] },
+        { date: "11-10", values: [33, 73, 53, 93] },
+        { date: "11-11", values: [30, 70, 50, 90] },
+        { date: "11-12", values: [36, 76, 56, 96] },
+        { date: "12-11", values: [38, 78, 58, 98] },
+        { date: "13-11", values: [40, 80, 60, 100] },
+        { date: "14-11", values: [42, 82, 62, 102] },
+        { date: "14-15", values: [44, 84, 64, 104] }
+      ],
+      barChartData: [
+        { label: "기준값", value: 87, color: "bg-sky-400" },
+        { label: "1순위", value: 91, color: "bg-blue-400" },
+        { label: "2순위", value: 83, color: "bg-yellow-400" },
+        { label: "3순위", value: 74, color: "bg-orange-400" },
+        { label: "4순위", value: 62, color: "bg-green-400" }
       ],
       tableData: [
         { label: "제품명", value: "PREMIUM" },
@@ -293,22 +367,29 @@ function App() {
       id: 6,
       title: "Efficiency",
       info: [
-        { 
-          label: "누적", title1: "Efficiency", value1: "96.5%", 
+        {
+          label: "누적", title1: "Efficiency", value1: "96.5%",
           label2: "일", title2: "Efficiency", value2: "98%",
           detail1: "건수", detailValue1: "232,345건 / 1,234,534",
           detail2: "건수", detailValue2: "232,345건 / 1,234,534"
         }
       ],
       chartData: [
-        { date: "11-09", values: [80, 120, 105, 155] },
-        { date: "11-10", values: [85, 125, 110, 160] },
-        { date: "11-11", values: [82, 122, 107, 157] },
-        { date: "11-12", values: [88, 128, 113, 163] },
-        { date: "12-11", values: [90, 130, 115, 165] },
+        { date: "11-09", values: [78, 118, 102, 152] },
+        { date: "11-10", values: [83, 123, 108, 158] },
+        { date: "11-11", values: [80, 120, 105, 155] },
+        { date: "11-12", values: [86, 126, 111, 161] },
+        { date: "12-11", values: [89, 129, 114, 164] },
         { date: "13-11", values: [92, 132, 117, 167] },
-        { date: "14-11", values: [94, 134, 119, 169] },
-        { date: "14-15", values: [96, 136, 121, 171] }
+        { date: "14-11", values: [95, 135, 120, 170] },
+        { date: "14-15", values: [98, 138, 123, 173] }
+      ],
+      barChartData: [
+        { label: "기준값", value: 95, color: "bg-sky-400" },
+        { label: "1순위", value: 98, color: "bg-blue-400" },
+        { label: "2순위", value: 92, color: "bg-yellow-400" },
+        { label: "3순위", value: 86, color: "bg-orange-400" },
+        { label: "4순위", value: 79, color: "bg-green-400" }
       ],
       tableData: [
         { label: "제품명", value: "STANDARD" },
@@ -318,26 +399,25 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 p-4">
       <div className="mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-4 ml-18">
           <h1 className="text-5xl font-bold text-white mb-2">Dashboard</h1>
           <p className="text-slate-400 text-lg">Welcome back! Here&apos;s your analytics overview.</p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-8">
-          <div className="flex gap-2 bg-slate-800 p-2 rounded-lg border border-slate-700">
+        <div className="mb-4 ml-18">
+          <div className="flex gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800 shadow-inner">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                    : 'text-slate-400 hover:text-white hover:bg-slate-700'
-                }`}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${activeTab === tab.id
+                  ? 'bg-slate-700 text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  }`}
               >
                 <span>{tab.name}</span>
               </button>
@@ -346,263 +426,473 @@ function App() {
         </div>
 
         {/* Alarm Area */}
-        <div className="mb-8 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-red-700/50 rounded-lg p-4 flex items-center gap-4">
-          <div className="text-2xl">⚠️</div>
-          <div className="flex-1">
-            <h3 className="text-red-300 font-semibold mb-1">Alert: System Notification</h3>
-            <p className="text-red-200/80 text-sm">Quality Score threshold exceeded. Immediate action required on EDGE product line.</p>
-          </div>
-        </div>
 
         {/* Tab Content */}
         {activeTab === 0 && (
-            <>
-              <div className="flex gap-6">
-                {/* Card Tabs - Vertical with rotated text */}
-                <div className="flex-shrink-0">
-                  <div className="flex flex-col gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
-                    {cardTabs.map((tab) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveCardTab(tab.id)}
-                        className={`px-3 py-1 rounded-md font-medium transition-all ${
-                          activeCardTab === tab.id
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
-                            : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
+          <>
+
+            <div className="flex gap-4">
+              {/* Card Tabs - Vertical with rotated text */}
+              <div className="flex-shrink-0">
+                <div className="flex flex-col gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
+                  {cardTabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveCardTab(tab.id)}
+                      className={`px-3 py-1 rounded-md font-medium transition-all ${activeCardTab === tab.id
+                        ? 'bg-slate-700 text-white'
+                        : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
                         }`}
-                      >
-                        <span className="writing-mode-vertical-rl transform rotate-180">{tab.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>                  {/* Card Tab Content */}
+                    >
+                      <span className="writing-mode-vertical-rl transform rotate-180">{tab.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="mb-4 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-red-700/50 rounded-xl p-4 flex items-center gap-4">
+                  <div className="text-2xl">⚠️</div>
                   <div className="flex-1">
-                    {activeCardTab === 0 && (
-                      <>
-                        {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-                          {cardConfigs.map((config) => (
-                            <Card
-                              key={config.id}
-                              title={config.title}
-                              info={config.info}
-                              chartData={config.chartData}
-                              tableData={config.tableData}
-                            />
-                          ))}
-                        </div>
+                    <h3 className="text-red-300 font-semibold mb-1">Alert: System Notification</h3>
+                    <p className="text-red-200/80 text-sm">Quality Score threshold exceeded. Immediate action required on EDGE product line.</p>
+                  </div>
+                </div>
+                {/* Card Tab Content */}
+                {activeCardTab === 0 && (
+                  <>
+                    {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
+                      {cardConfigs.map((config) => (
+                        <Card
+                          key={config.id}
+                          title={config.title}
+                          info={config.info}
+                          chartData={config.chartData}
+                          tableData={config.tableData}
+                          barChartData={config.barChartData}
+                        />
+                      ))}
+                    </div>
 
-                        {/* Footer Stats */}
-                        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-                            <p className="text-slate-400 mb-2">Last Updated</p>
-                            <p className="text-white text-2xl font-semibold">Just now</p>
-                          </div>
-                          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-                            <p className="text-slate-400 mb-2">Status</p>
-                            <p className="text-emerald-400 text-2xl font-semibold">✓ All Systems Operational</p>
-                          </div>
-                          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-                            <p className="text-slate-400 mb-2">Uptime</p>
-                            <p className="text-white text-2xl font-semibold">99.9%</p>
-                          </div>
-                        </div>
-                      </>
-                    )}
+                    {/* Footer Stats */}
+                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
+                        <p className="text-slate-400 mb-2">Last Updated</p>
+                        <p className="text-white text-2xl font-semibold">Just now</p>
+                      </div>
+                      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
+                        <p className="text-slate-400 mb-2">Status</p>
+                        <p className="text-emerald-400 text-2xl font-semibold">✓ All Systems Operational</p>
+                      </div>
+                      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
+                        <p className="text-slate-400 mb-2">Uptime</p>
+                        <p className="text-white text-2xl font-semibold">99.9%</p>
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                    {activeCardTab === 1 && (
-                      <div>
-                        {/* Select Box */}
-                        <div className="mb-6">
-                          <select
-                            value={selectedCustomer}
-                            onChange={(e) => setSelectedCustomer(e.target.value)}
-                            className="bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-600 transition-colors"
-                          >
-                            <option value="All">All</option>
-                            <option value="고객사">고객사</option>
-                          </select>
+                {activeCardTab === 1 && (
+                  <>
+                    <div className="flex flex-row gap-4">
+                      {/* Control & Cards Group */}
+                      <div className="flex flex-col gap-4 flex-3">
+                        {/* Control Group */}
+                        <div className="flex">
+                          <div className="flex items-center gap-4">
+                            <label className="text-sm font-medium text-slate-300 whitespace-nowrap">고객사 선택</label>
+                            <select
+                              value={selectedCustomer}
+                              onChange={(e) => setSelectedCustomer(e.target.value)}
+                              className="bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-600 transition-colors"
+                            >
+                              <option value="All">All</option>
+                              <option value="고객사">고객사</option>
+                            </select>
+                          </div>
                         </div>
 
                         {/* Trend Cards - 3 columns */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {/* 월 Trend */}
                           <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
-                            <div className="bg-slate-700 px-6 py-4">
-                              <h2 className="text-white text-xl font-bold">월 Trend</h2>
+                            <div className="bg-slate-700 px-4 py-2">
+                              <h2 className="text-white text-md font-bold">월 Trend</h2>
                             </div>
-                            <div className="p-6">
-                              <div className="h-64 flex items-end justify-between gap-2">
+                            <div className="p-6 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+                              {/* Chart */}
+                              <div className="flex-1 h-48 flex items-end justify-between gap-2">
                                 {[
-                                  { values: [40, 60, 30] },
-                                  { values: [50, 70, 40] },
-                                  { values: [45, 65, 35] },
-                                  { values: [55, 75, 45] },
-                                  { values: [60, 80, 50] },
-                                  { values: [65, 85, 55] }
+                                  { date: "11-09", values: [45, 95, 72, 110] },
+                                  { date: "11-10", values: [58, 108, 88, 128] },
+                                  { date: "11-11", values: [52, 102, 80, 122] },
+                                  { date: "11-12", values: [68, 118, 98, 138] },
+                                  { date: "12-11", values: [75, 125, 105, 145] },
+                                  { date: "13-11", values: [82, 132, 112, 152] }
                                 ].map((data, idx) => {
-                                  const total = data.values.reduce((sum, val) => sum + val, 0);
-                                  const maxTotal = 220;
+                                  const maxTotalValue = Math.max(...[
+                                    { date: "11-09", values: [45, 95, 72, 110] },
+                                    { date: "11-10", values: [58, 108, 88, 128] },
+                                    { date: "11-11", values: [52, 102, 80, 122] },
+                                    { date: "11-12", values: [68, 118, 98, 138] },
+                                    { date: "12-11", values: [75, 125, 105, 145] },
+                                    { date: "13-11", values: [82, 132, 112, 152] }
+                                  ].map(d => d.values.reduce((sum, val) => sum + val, 0)));
+                                  const colors = ['bg-sky-400', 'bg-blue-400', 'bg-yellow-400', 'bg-orange-400'];
                                   return (
-                                    <div key={idx} className="flex-1 flex flex-col items-center">
-                                      <div className="w-full relative h-48 flex items-end">
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                      <div className="w-full relative h-32 flex items-end">
                                         <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
                                           {data.values.map((val, i) => {
-                                            const percentage = (val / maxTotal) * 100;
-                                            const colors = ['bg-violet-600', 'bg-indigo-600', 'bg-purple-500'];
+                                            const percentage = (val / maxTotalValue) * 100;
                                             return (
                                               <div
                                                 key={i}
-                                                className={`w-full ${colors[i]}`}
+                                                className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
                                                 style={{ height: `${percentage}%` }}
                                               ></div>
                                             );
                                           })}
                                         </div>
                                       </div>
+                                      <span className="text-xs text-slate-400 text-center">{data.date}</span>
                                     </div>
                                   );
                                 })}
+                              </div>
+                              {/* Legend */}
+                              <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-sky-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 1</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-blue-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 2</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-yellow-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 3</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-orange-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 4</span>
+                                </div>
                               </div>
                             </div>
                           </div>
 
                           {/* 주 Trend */}
                           <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
-                            <div className="bg-slate-700 px-6 py-4">
-                              <h2 className="text-white text-xl font-bold">주 Trend</h2>
+                            <div className="bg-slate-700 px-4 py-2">
+                              <h2 className="text-white text-md font-bold">주 Trend</h2>
                             </div>
-                            <div className="p-6">
-                              <div className="h-64 flex items-end justify-between gap-2">
+                            <div className="p-6 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+                              {/* Chart */}
+                              <div className="flex-1 h-48 flex items-end justify-between gap-2">
                                 {[
-                                  { values: [35, 55, 28] },
-                                  { values: [45, 65, 38] },
-                                  { values: [40, 60, 33] },
-                                  { values: [50, 70, 43] },
-                                  { values: [55, 75, 48] },
-                                  { values: [60, 80, 53] }
+                                  { date: "11-09", values: [40, 88, 65, 105] },
+                                  { date: "11-10", values: [48, 98, 75, 115] },
+                                  { date: "11-11", values: [44, 92, 70, 110] },
+                                  { date: "11-12", values: [56, 105, 82, 122] },
+                                  { date: "12-11", values: [62, 112, 89, 129] },
+                                  { date: "13-11", values: [70, 120, 97, 137] }
                                 ].map((data, idx) => {
-                                  const total = data.values.reduce((sum, val) => sum + val, 0);
-                                  const maxTotal = 220;
+                                  const maxTotalValue = Math.max(...[
+                                    { date: "11-09", values: [40, 88, 65, 105] },
+                                    { date: "11-10", values: [48, 98, 75, 115] },
+                                    { date: "11-11", values: [44, 92, 70, 110] },
+                                    { date: "11-12", values: [56, 105, 82, 122] },
+                                    { date: "12-11", values: [62, 112, 89, 129] },
+                                    { date: "13-11", values: [70, 120, 97, 137] }
+                                  ].map(d => d.values.reduce((sum, val) => sum + val, 0)));
+                                  const colors = ['bg-sky-400', 'bg-blue-400', 'bg-yellow-400', 'bg-orange-400'];
                                   return (
-                                    <div key={idx} className="flex-1 flex flex-col items-center">
-                                      <div className="w-full relative h-48 flex items-end">
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                      <div className="w-full relative h-32 flex items-end">
                                         <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
                                           {data.values.map((val, i) => {
-                                            const percentage = (val / maxTotal) * 100;
-                                            const colors = ['bg-violet-600', 'bg-indigo-600', 'bg-purple-500'];
+                                            const percentage = (val / maxTotalValue) * 100;
                                             return (
                                               <div
                                                 key={i}
-                                                className={`w-full ${colors[i]}`}
+                                                className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
                                                 style={{ height: `${percentage}%` }}
                                               ></div>
                                             );
                                           })}
                                         </div>
                                       </div>
+                                      <span className="text-xs text-slate-400 text-center">{data.date}</span>
                                     </div>
                                   );
                                 })}
+                              </div>
+                              {/* Legend */}
+                              <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-sky-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 1</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-blue-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 2</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-yellow-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 3</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-orange-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 4</span>
+                                </div>
                               </div>
                             </div>
                           </div>
 
                           {/* 일 Trend */}
                           <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
-                            <div className="bg-slate-700 px-6 py-4">
-                              <h2 className="text-white text-xl font-bold">일 Trend</h2>
+                            <div className="bg-slate-700 px-4 py-2">
+                              <h2 className="text-white text-md font-bold">일 Trend</h2>
                             </div>
-                            <div className="p-6">
-                              <div className="h-64 flex items-end justify-between gap-2">
+                            <div className="p-6 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+                              {/* Chart */}
+                              <div className="flex-1 h-48 flex items-end justify-between gap-2">
                                 {[
-                                  { values: [30, 50, 25] },
-                                  { values: [40, 60, 35] },
-                                  { values: [35, 55, 30] },
-                                  { values: [45, 65, 40] },
-                                  { values: [50, 70, 45] },
-                                  { values: [55, 75, 50] }
+                                  { date: "11-09", values: [35, 78, 58, 98] },
+                                  { date: "11-10", values: [42, 85, 65, 105] },
+                                  { date: "11-11", values: [38, 82, 62, 102] },
+                                  { date: "11-12", values: [48, 95, 75, 115] },
+                                  { date: "12-11", values: [54, 102, 82, 122] },
+                                  { date: "13-11", values: [60, 110, 90, 130] }
                                 ].map((data, idx) => {
-                                  const total = data.values.reduce((sum, val) => sum + val, 0);
-                                  const maxTotal = 220;
+                                  const maxTotalValue = Math.max(...[
+                                    { date: "11-09", values: [35, 78, 58, 98] },
+                                    { date: "11-10", values: [42, 85, 65, 105] },
+                                    { date: "11-11", values: [38, 82, 62, 102] },
+                                    { date: "11-12", values: [48, 95, 75, 115] },
+                                    { date: "12-11", values: [54, 102, 82, 122] },
+                                    { date: "13-11", values: [60, 110, 90, 130] }
+                                  ].map(d => d.values.reduce((sum, val) => sum + val, 0)));
+                                  const colors = ['bg-sky-400', 'bg-blue-400', 'bg-yellow-400', 'bg-orange-400'];
                                   return (
-                                    <div key={idx} className="flex-1 flex flex-col items-center">
-                                      <div className="w-full relative h-48 flex items-end">
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                      <div className="w-full relative h-32 flex items-end">
                                         <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
                                           {data.values.map((val, i) => {
-                                            const percentage = (val / maxTotal) * 100;
-                                            const colors = ['bg-violet-600', 'bg-indigo-600', 'bg-purple-500'];
+                                            const percentage = (val / maxTotalValue) * 100;
                                             return (
                                               <div
                                                 key={i}
-                                                className={`w-full ${colors[i]}`}
+                                                className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
                                                 style={{ height: `${percentage}%` }}
                                               ></div>
                                             );
                                           })}
                                         </div>
                                       </div>
+                                      <span className="text-xs text-slate-400 text-center">{data.date}</span>
                                     </div>
                                   );
                                 })}
+                              </div>
+                              {/* Legend */}
+                              <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-sky-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 1</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-blue-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 2</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-yellow-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 3</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-3 h-3 bg-orange-400 rounded"></div>
+                                  <span className="text-xs text-slate-300">Data 4</span>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    )}
-                  </div>
+
+                      {/* New Div in Parent Group */}
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4 justify-end">
+                          <label className="text-sm font-medium text-slate-300 whitespace-nowrap">기준</label>
+                          <select className="bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-600 transition-colors">
+                            <option value="">일자</option>
+                            <option value="">상세</option>
+                          </select>
+                        </div>
+
+                        {/* 통합 범례 */}
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-violet-600 rounded"></div>
+                            <span className="text-sm text-slate-300">xxxx 9.0% (334건)</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-indigo-600 rounded"></div>
+                            <span className="text-sm text-slate-300">xxxx 9.0% (334건)</span>
+                          </div>
+                        </div>
+                      </div>
+
+
+
+                    </div>
+                    {/* Y Parameter Table */}
+                    <table className="w-full border-collapse rounded-xl overflow-hidden border border-slate-600 mt-4">
+                      <thead>
+                        <tr className="bg-slate-700 border-b border-slate-600">
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목1</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목2</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목3</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목4</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목5</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목6</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목7</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목8</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목9</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold border-r border-slate-600">항목10</th>
+                          <th className="px-2 py-2 text-slate-300 text-xs font-semibold">항목11</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="bg-slate-800 border-b border-slate-600 hover:bg-slate-700/50">
+                          <th className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600" rowSpan="3">데이터</th>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 1</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">100</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 2</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">200</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 3</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">300</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 4</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">400</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 5</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">500</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs">데이터 6</td>
+                        </tr>
+                        <tr className="bg-slate-800 border-b border-slate-600 hover:bg-slate-700/50">
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 7</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">700</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 8</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">800</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 9</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">900</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 10</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1000</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 11</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1100</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs">데이터 12</td>
+                        </tr>
+                        <tr className="bg-slate-800 hover:bg-slate-700/50">
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 13</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1300</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 14</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1400</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 15</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1500</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 16</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1600</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs border-r border-slate-600">데이터 17</td>
+                          <td className="px-2 py-2 text-slate-200 text-xs border-r border-slate-600">1700</td>
+                          <td className="px-2 py-2 text-slate-300 text-xs">데이터 18</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </>
+                )
+                }
+
+
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 1 && (
+          <>
+
+            <div className="flex gap-4">
+              {/* Card Tabs - Vertical with rotated text */}
+              <div className="flex-shrink-0">
+                <div className="flex flex-col gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
+                  {cardTabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveCardTab(tab.id)}
+                      className={`px-3 py-1 rounded-md font-medium transition-all ${activeCardTab === tab.id
+                        ? 'bg-slate-700 text-white'
+                        : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
+                        }`}
+                    >
+                      <span className="writing-mode-vertical-rl transform rotate-180">{tab.name}</span>
+                    </button>
+                  ))}
                 </div>
-              </>
-            )}
-
-            {activeTab === 1 && (
-              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                <span className="text-6xl mb-4 block">📈</span>
-                <h2 className="text-2xl font-bold text-white mb-2">GR</h2>
-                <p className="text-slate-400">GR content coming soon...</p>
               </div>
-            )}
+              <div className="flex-1">
 
-            {activeTab === 2 && (
-              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                <span className="text-6xl mb-4 block">📋</span>
-                <h2 className="text-2xl font-bold text-white mb-2">SHP</h2>
-                <p className="text-slate-400">SHP content coming soon...</p>
-              </div>
-            )}
+                {/* Card Tab Content */}
+                {activeCardTab === 0 && (
+                  <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center h-full">
+                    <h2 className="text-2xl font-bold text-white mb-2">GR</h2>
+                    <p className="text-slate-400">GR X content coming soon...</p>
+                  </div>
+                )}
 
-            {activeTab === 3 && (
-              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                <span className="text-6xl mb-4 block">⚙️</span>
-                <h2 className="text-2xl font-bold text-white mb-2">POL</h2>
-                <p className="text-slate-400">POL content coming soon...</p>
+                {activeCardTab === 1 && (
+                  <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center h-full">
+                    <h2 className="text-2xl font-bold text-white mb-2">GR</h2>
+                    <p className="text-slate-400">GR Y content coming soon...</p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          </>
+        )}
 
-            {activeTab === 4 && (
-              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                <span className="text-6xl mb-4 block">👥</span>
-                <h2 className="text-2xl font-bold text-white mb-2">CL</h2>
-                <p className="text-slate-400">CL content coming soon...</p>
-              </div>
-            )}
+        {activeTab === 2 && (
+          <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">SHP</h2>
+            <p className="text-slate-400">SHP content coming soon...</p>
+          </div>
+        )}
 
-            {activeTab === 5 && (
-              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                <span className="text-6xl mb-4 block">📝</span>
-                <h2 className="text-2xl font-bold text-white mb-2">EPI</h2>
-                <p className="text-slate-400">EPI content coming soon...</p>
-              </div>
-            )}
+        {activeTab === 3 && (
+          <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">POL</h2>
+            <p className="text-slate-400">POL content coming soon...</p>
+          </div>
+        )}
 
-            {activeTab === 6 && (
-              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                <span className="text-6xl mb-4 block">❓</span>
-                <h2 className="text-2xl font-bold text-white mb-2">MI</h2>
-                <p className="text-slate-400">MI content coming soon...</p>
-              </div>
-            )}
+        {activeTab === 4 && (
+          <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">CL</h2>
+            <p className="text-slate-400">CL content coming soon...</p>
+          </div>
+        )}
+
+        {activeTab === 5 && (
+          <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">EPI</h2>
+            <p className="text-slate-400">EPI content coming soon...</p>
+          </div>
+        )}
+
+        {activeTab === 6 && (
+          <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">MI</h2>
+            <p className="text-slate-400">MI content coming soon...</p>
+          </div>
+        )}
       </div>
     </div>
   )
