@@ -220,7 +220,7 @@ function App() {
         { date: "14-15", values: [92, 142, 122, 162] }
       ],
       barChartData: [
-        { label: "품질 완목", value: 85, color: "bg-blue-600" },
+        { label: "품질항목", value: 85, color: "bg-blue-600" },
         { label: "1순위", value: 92, color: "bg-blue-500" },
         { label: "2순위", value: 78, color: "bg-blue-400" },
         { label: "3순위", value: 65, color: "bg-blue-300" },
@@ -253,7 +253,7 @@ function App() {
         { date: "14-15", values: [80, 120, 100, 140] }
       ],
       barChartData: [
-        { label: "기준값", value: 84, color: "bg-sky-400" },
+        { label: "품질항목", value: 84, color: "bg-sky-400" },
         { label: "1순위", value: 91, color: "bg-blue-400" },
         { label: "2순위", value: 79, color: "bg-yellow-400" },
         { label: "3순위", value: 67, color: "bg-orange-400" },
@@ -286,7 +286,7 @@ function App() {
         { date: "14-15", values: [91, 140, 124, 172] }
       ],
       barChartData: [
-        { label: "기준값", value: 94, color: "bg-sky-400" },
+        { label: "품질항목", value: 94, color: "bg-sky-400" },
         { label: "1순위", value: 97, color: "bg-blue-400" },
         { label: "2순위", value: 89, color: "bg-yellow-400" },
         { label: "3순위", value: 83, color: "bg-orange-400" },
@@ -352,7 +352,7 @@ function App() {
         { date: "14-15", values: [44, 84, 64, 104] }
       ],
       barChartData: [
-        { label: "기준값", value: 87, color: "bg-sky-400" },
+        { label: "품질항목", value: 87, color: "bg-sky-400" },
         { label: "1순위", value: 91, color: "bg-blue-400" },
         { label: "2순위", value: 83, color: "bg-yellow-400" },
         { label: "3순위", value: 74, color: "bg-orange-400" },
@@ -385,7 +385,7 @@ function App() {
         { date: "14-15", values: [98, 138, 123, 173] }
       ],
       barChartData: [
-        { label: "기준값", value: 95, color: "bg-sky-400" },
+        { label: "품질항목", value: 95, color: "bg-sky-400" },
         { label: "1순위", value: 98, color: "bg-blue-400" },
         { label: "2순위", value: 92, color: "bg-yellow-400" },
         { label: "3순위", value: 86, color: "bg-orange-400" },
@@ -403,8 +403,8 @@ function App() {
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-4 ml-18">
-          <h1 className="text-5xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-slate-400 text-lg">Welcome back! Here&apos;s your analytics overview.</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-slate-400 text-md">Welcome back! Here&apos;s your analytics overview.</p>
         </div>
 
         {/* Tabs */}
@@ -414,7 +414,7 @@ function App() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${activeTab === tab.id
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-md font-medium transition-all ${activeTab === tab.id
                   ? 'bg-slate-700 text-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-700'
                   }`}
@@ -474,21 +474,7 @@ function App() {
                       ))}
                     </div>
 
-                    {/* Footer Stats */}
-                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-                        <p className="text-slate-400 mb-2">Last Updated</p>
-                        <p className="text-white text-2xl font-semibold">Just now</p>
-                      </div>
-                      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-                        <p className="text-slate-400 mb-2">Status</p>
-                        <p className="text-emerald-400 text-2xl font-semibold">✓ All Systems Operational</p>
-                      </div>
-                      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-                        <p className="text-slate-400 mb-2">Uptime</p>
-                        <p className="text-white text-2xl font-semibold">99.9%</p>
-                      </div>
-                    </div>
+                    
                   </>
                 )}
 
@@ -519,9 +505,9 @@ function App() {
                             <div className="bg-slate-700 px-4 py-2">
                               <h2 className="text-white text-md font-bold">월 Trend</h2>
                             </div>
-                            <div className="p-6 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+                            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-700">
                               {/* Chart */}
-                              <div className="flex-1 h-48 flex items-end justify-between gap-2">
+                              <div className="h-48 flex items-end justify-between gap-2">
                                 {[
                                   { date: "11-09", values: [45, 95, 72, 110] },
                                   { date: "11-10", values: [58, 108, 88, 128] },
@@ -560,25 +546,6 @@ function App() {
                                   );
                                 })}
                               </div>
-                              {/* Legend */}
-                              <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-sky-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 1</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-blue-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 2</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 3</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-orange-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 4</span>
-                                </div>
-                              </div>
                             </div>
                           </div>
 
@@ -587,9 +554,9 @@ function App() {
                             <div className="bg-slate-700 px-4 py-2">
                               <h2 className="text-white text-md font-bold">주 Trend</h2>
                             </div>
-                            <div className="p-6 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+                            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-700">
                               {/* Chart */}
-                              <div className="flex-1 h-48 flex items-end justify-between gap-2">
+                              <div className="h-48 flex items-end justify-between gap-2">
                                 {[
                                   { date: "11-09", values: [40, 88, 65, 105] },
                                   { date: "11-10", values: [48, 98, 75, 115] },
@@ -628,25 +595,6 @@ function App() {
                                   );
                                 })}
                               </div>
-                              {/* Legend */}
-                              <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-sky-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 1</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-blue-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 2</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 3</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-orange-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 4</span>
-                                </div>
-                              </div>
                             </div>
                           </div>
 
@@ -655,9 +603,9 @@ function App() {
                             <div className="bg-slate-700 px-4 py-2">
                               <h2 className="text-white text-md font-bold">일 Trend</h2>
                             </div>
-                            <div className="p-6 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+                            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-700">
                               {/* Chart */}
-                              <div className="flex-1 h-48 flex items-end justify-between gap-2">
+                              <div className="h-48 flex items-end justify-between gap-2">
                                 {[
                                   { date: "11-09", values: [35, 78, 58, 98] },
                                   { date: "11-10", values: [42, 85, 65, 105] },
@@ -696,25 +644,6 @@ function App() {
                                   );
                                 })}
                               </div>
-                              {/* Legend */}
-                              <div className="flex flex-col gap-2 min-w-max pl-4 border-l border-slate-600">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-sky-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 1</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-blue-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 2</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 3</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-orange-400 rounded"></div>
-                                  <span className="text-xs text-slate-300">Data 4</span>
-                                </div>
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -733,11 +662,11 @@ function App() {
                         {/* 통합 범례 */}
                         <div className="flex flex-col gap-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-violet-600 rounded"></div>
+                            <div className="w-3 h-3 bg-sky-400 rounded"></div>
                             <span className="text-sm text-slate-300">xxxx 9.0% (334건)</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 bg-indigo-600 rounded"></div>
+                            <div className="w-3 h-3 bg-blue-400 rounded"></div>
                             <span className="text-sm text-slate-300">xxxx 9.0% (334건)</span>
                           </div>
                         </div>
