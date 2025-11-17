@@ -141,15 +141,16 @@ Card.propTypes = {
 function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [activeCardTab, setActiveCardTab] = useState(0);
+  const [selectedCustomer, setSelectedCustomer] = useState('All');
 
   const tabs = [
-    { id: 0, name: 'Summary', icon: '📊' },
-    { id: 1, name: 'GR', icon: '📈' },
-    { id: 2, name: 'SHP', icon: '📋' },
-    { id: 3, name: 'POL', icon: '⚙️' },
-    { id: 4, name: 'CL', icon: '👥' },
-    { id: 5, name: 'EPI', icon: '📝' },
-    { id: 6, name: 'MI', icon: '❓' }
+    { id: 0, name: 'Summary' },
+    { id: 1, name: 'GR' },
+    { id: 2, name: 'SHP' },
+    { id: 3, name: 'POL' },
+    { id: 4, name: 'CL' },
+    { id: 5, name: 'EPI' },
+    { id: 6, name: 'MI' }
   ];
 
   const cardTabs = [
@@ -327,18 +328,17 @@ function App() {
 
         {/* Tabs */}
         <div className="mb-8">
-          <div className="flex gap-2 bg-slate-900 p-2 rounded-lg border border-slate-800">
+          <div className="flex gap-2 bg-slate-800 p-2 rounded-lg border border-slate-700">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${
                   activeTab === tab.id
-                    ? 'bg-slate-800 text-white shadow-lg border border-slate-700'
-                    : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-700'
                 }`}
               >
-                <span className="text-xl">{tab.icon}</span>
                 <span>{tab.name}</span>
               </button>
             ))}
@@ -367,7 +367,7 @@ function App() {
                         onClick={() => setActiveCardTab(tab.id)}
                         className={`px-3 py-1 rounded-md font-medium transition-all ${
                           activeCardTab === tab.id
-                            ? 'bg-slate-800 text-white shadow-lg border border-slate-700'
+                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/50'
                             : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
                         }`}
                       >
@@ -411,9 +411,144 @@ function App() {
                     )}
 
                     {activeCardTab === 1 && (
-                      <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
-                        <h2 className="text-2xl font-bold text-white mb-2">Y Parameter</h2>
-                        <p className="text-slate-400">Y Parameter content coming soon...</p>
+                      <div>
+                        {/* Select Box */}
+                        <div className="mb-6">
+                          <select
+                            value={selectedCustomer}
+                            onChange={(e) => setSelectedCustomer(e.target.value)}
+                            className="bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-600 transition-colors"
+                          >
+                            <option value="All">All</option>
+                            <option value="고객사">고객사</option>
+                          </select>
+                        </div>
+
+                        {/* Trend Cards - 3 columns */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {/* 월 Trend */}
+                          <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                            <div className="bg-slate-700 px-6 py-4">
+                              <h2 className="text-white text-xl font-bold">월 Trend</h2>
+                            </div>
+                            <div className="p-6">
+                              <div className="h-64 flex items-end justify-between gap-2">
+                                {[
+                                  { values: [40, 60, 30] },
+                                  { values: [50, 70, 40] },
+                                  { values: [45, 65, 35] },
+                                  { values: [55, 75, 45] },
+                                  { values: [60, 80, 50] },
+                                  { values: [65, 85, 55] }
+                                ].map((data, idx) => {
+                                  const total = data.values.reduce((sum, val) => sum + val, 0);
+                                  const maxTotal = 220;
+                                  return (
+                                    <div key={idx} className="flex-1 flex flex-col items-center">
+                                      <div className="w-full relative h-48 flex items-end">
+                                        <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                                          {data.values.map((val, i) => {
+                                            const percentage = (val / maxTotal) * 100;
+                                            const colors = ['bg-violet-600', 'bg-indigo-600', 'bg-purple-500'];
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`w-full ${colors[i]}`}
+                                                style={{ height: `${percentage}%` }}
+                                              ></div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 주 Trend */}
+                          <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                            <div className="bg-slate-700 px-6 py-4">
+                              <h2 className="text-white text-xl font-bold">주 Trend</h2>
+                            </div>
+                            <div className="p-6">
+                              <div className="h-64 flex items-end justify-between gap-2">
+                                {[
+                                  { values: [35, 55, 28] },
+                                  { values: [45, 65, 38] },
+                                  { values: [40, 60, 33] },
+                                  { values: [50, 70, 43] },
+                                  { values: [55, 75, 48] },
+                                  { values: [60, 80, 53] }
+                                ].map((data, idx) => {
+                                  const total = data.values.reduce((sum, val) => sum + val, 0);
+                                  const maxTotal = 220;
+                                  return (
+                                    <div key={idx} className="flex-1 flex flex-col items-center">
+                                      <div className="w-full relative h-48 flex items-end">
+                                        <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                                          {data.values.map((val, i) => {
+                                            const percentage = (val / maxTotal) * 100;
+                                            const colors = ['bg-violet-600', 'bg-indigo-600', 'bg-purple-500'];
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`w-full ${colors[i]}`}
+                                                style={{ height: `${percentage}%` }}
+                                              ></div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 일 Trend */}
+                          <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                            <div className="bg-slate-700 px-6 py-4">
+                              <h2 className="text-white text-xl font-bold">일 Trend</h2>
+                            </div>
+                            <div className="p-6">
+                              <div className="h-64 flex items-end justify-between gap-2">
+                                {[
+                                  { values: [30, 50, 25] },
+                                  { values: [40, 60, 35] },
+                                  { values: [35, 55, 30] },
+                                  { values: [45, 65, 40] },
+                                  { values: [50, 70, 45] },
+                                  { values: [55, 75, 50] }
+                                ].map((data, idx) => {
+                                  const total = data.values.reduce((sum, val) => sum + val, 0);
+                                  const maxTotal = 220;
+                                  return (
+                                    <div key={idx} className="flex-1 flex flex-col items-center">
+                                      <div className="w-full relative h-48 flex items-end">
+                                        <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                                          {data.values.map((val, i) => {
+                                            const percentage = (val / maxTotal) * 100;
+                                            const colors = ['bg-violet-600', 'bg-indigo-600', 'bg-purple-500'];
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`w-full ${colors[i]}`}
+                                                style={{ height: `${percentage}%` }}
+                                              ></div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
