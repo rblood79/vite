@@ -404,7 +404,6 @@ function App() {
         {/* Header */}
         <div className="mb-4 ml-18">
           <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-slate-400 text-md">Welcome back! Here&apos;s your analytics overview.</p>
         </div>
 
         {/* Tabs */}
