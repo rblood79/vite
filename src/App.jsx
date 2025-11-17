@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Card Component
@@ -138,6 +139,24 @@ Card.propTypes = {
 };
 
 function App() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [activeCardTab, setActiveCardTab] = useState(0);
+
+  const tabs = [
+    { id: 0, name: 'Summary', icon: '📊' },
+    { id: 1, name: 'GR', icon: '📈' },
+    { id: 2, name: 'SHP', icon: '📋' },
+    { id: 3, name: 'POL', icon: '⚙️' },
+    { id: 4, name: 'CL', icon: '👥' },
+    { id: 5, name: 'EPI', icon: '📝' },
+    { id: 6, name: 'MI', icon: '❓' }
+  ];
+
+  const cardTabs = [
+    { id: 0, name: 'X Parameter' },
+    { id: 1, name: 'Y Parameter' }
+  ];
+
   const cardConfigs = [
     {
       id: 1,
@@ -306,6 +325,26 @@ function App() {
           <p className="text-slate-400 text-lg">Welcome back! Here&apos;s your analytics overview.</p>
         </div>
 
+        {/* Tabs */}
+        <div className="mb-8">
+          <div className="flex gap-2 bg-slate-900 p-2 rounded-lg border border-slate-800">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md font-medium transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-slate-800 text-white shadow-lg border border-slate-700'
+                    : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
+                }`}
+              >
+                <span className="text-xl">{tab.icon}</span>
+                <span>{tab.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Alarm Area */}
         <div className="mb-8 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-red-700/50 rounded-lg p-4 flex items-center gap-4">
           <div className="text-2xl">⚠️</div>
@@ -313,39 +352,122 @@ function App() {
             <h3 className="text-red-300 font-semibold mb-1">Alert: System Notification</h3>
             <p className="text-red-200/80 text-sm">Quality Score threshold exceeded. Immediate action required on EDGE product line.</p>
           </div>
-          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-medium transition-colors">
-            View Details
-          </button>
         </div>
 
-        {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-          {cardConfigs.map((config) => (
-            <Card
-              key={config.id}
-              title={config.title}
-              info={config.info}
-              chartData={config.chartData}
-              tableData={config.tableData}
-            />
-          ))}
-        </div>
+        {/* Tab Content */}
+        {activeTab === 0 && (
+            <>
+              <div className="flex gap-6">
+                {/* Card Tabs - Vertical with rotated text */}
+                <div className="flex-shrink-0">
+                  <div className="flex flex-col gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
+                    {cardTabs.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveCardTab(tab.id)}
+                        className={`px-3 py-1 rounded-md font-medium transition-all ${
+                          activeCardTab === tab.id
+                            ? 'bg-slate-800 text-white shadow-lg border border-slate-700'
+                            : 'text-slate-500 hover:text-slate-300 hover:bg-slate-850'
+                        }`}
+                      >
+                        <span className="writing-mode-vertical-rl transform rotate-180">{tab.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>                  {/* Card Tab Content */}
+                  <div className="flex-1">
+                    {activeCardTab === 0 && (
+                      <>
+                        {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
+                          {cardConfigs.map((config) => (
+                            <Card
+                              key={config.id}
+                              title={config.title}
+                              info={config.info}
+                              chartData={config.chartData}
+                              tableData={config.tableData}
+                            />
+                          ))}
+                        </div>
 
-        {/* Footer Stats */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-            <p className="text-slate-400 mb-2">Last Updated</p>
-            <p className="text-white text-2xl font-semibold">Just now</p>
-          </div>
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-            <p className="text-slate-400 mb-2">Status</p>
-            <p className="text-emerald-400 text-2xl font-semibold">✓ All Systems Operational</p>
-          </div>
-          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
-            <p className="text-slate-400 mb-2">Uptime</p>
-            <p className="text-white text-2xl font-semibold">99.9%</p>
-          </div>
-        </div>
+                        {/* Footer Stats */}
+                        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
+                            <p className="text-slate-400 mb-2">Last Updated</p>
+                            <p className="text-white text-2xl font-semibold">Just now</p>
+                          </div>
+                          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
+                            <p className="text-slate-400 mb-2">Status</p>
+                            <p className="text-emerald-400 text-2xl font-semibold">✓ All Systems Operational</p>
+                          </div>
+                          <div className="bg-slate-800 rounded-lg p-6 border border-slate-700 shadow-sm hover:shadow-lg transition-shadow">
+                            <p className="text-slate-400 mb-2">Uptime</p>
+                            <p className="text-white text-2xl font-semibold">99.9%</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {activeCardTab === 1 && (
+                      <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                        <h2 className="text-2xl font-bold text-white mb-2">Y Parameter</h2>
+                        <p className="text-slate-400">Y Parameter content coming soon...</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {activeTab === 1 && (
+              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                <span className="text-6xl mb-4 block">📈</span>
+                <h2 className="text-2xl font-bold text-white mb-2">GR</h2>
+                <p className="text-slate-400">GR content coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 2 && (
+              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                <span className="text-6xl mb-4 block">📋</span>
+                <h2 className="text-2xl font-bold text-white mb-2">SHP</h2>
+                <p className="text-slate-400">SHP content coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 3 && (
+              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                <span className="text-6xl mb-4 block">⚙️</span>
+                <h2 className="text-2xl font-bold text-white mb-2">POL</h2>
+                <p className="text-slate-400">POL content coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 4 && (
+              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                <span className="text-6xl mb-4 block">👥</span>
+                <h2 className="text-2xl font-bold text-white mb-2">CL</h2>
+                <p className="text-slate-400">CL content coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 5 && (
+              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                <span className="text-6xl mb-4 block">📝</span>
+                <h2 className="text-2xl font-bold text-white mb-2">EPI</h2>
+                <p className="text-slate-400">EPI content coming soon...</p>
+              </div>
+            )}
+
+            {activeTab === 6 && (
+              <div className="bg-slate-800 rounded-lg p-12 border border-slate-700 text-center">
+                <span className="text-6xl mb-4 block">❓</span>
+                <h2 className="text-2xl font-bold text-white mb-2">MI</h2>
+                <p className="text-slate-400">MI content coming soon...</p>
+              </div>
+            )}
       </div>
     </div>
   )

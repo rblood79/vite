@@ -4,4 +4,14 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  theme: {
+    extend: {
+      colors: {
+        slate: {
+          750: '#293548',
+          850: '#1a202e',
+        }
+      }
+    }
+  }
 }
