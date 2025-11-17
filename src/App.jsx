@@ -461,7 +461,7 @@ function App() {
                 {activeCardTab === 0 && (
                   <>
                     {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-4">
                       {cardConfigs.map((config) => (
                         <Card
                           key={config.id}
