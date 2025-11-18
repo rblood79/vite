@@ -37,9 +37,9 @@ function Card({ title, info, chartData, tableData, barChartData }) {
       </div>
 
       {/* Chart Section */}
-      <div className="px-4 py-4 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
+      <div className="px-4 py-3 flex items-center justify-between gap-4 bg-gradient-to-br from-slate-800 to-slate-700">
         {/* Chart */}
-        <div className="flex-1 h-48 flex items-end justify-between gap-2">
+        <div className="flex-1 h-32 flex items-end justify-between gap-2">
           {chartData.map((data, idx) => {
             const maxTotalValue = Math.max(...chartData.map(d => d.values.reduce((sum, val) => sum + val, 0)));
             const colors = [
@@ -51,7 +51,7 @@ function Card({ title, info, chartData, tableData, barChartData }) {
             ];
             return (
               <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                <div className="w-full relative h-32 flex items-end">
+                <div className="w-full relative h-20 flex items-end">
                   <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
                     {data.values.map((val, i) => {
                       const percentage = (val / maxTotalValue) * 100;
@@ -98,43 +98,41 @@ function Card({ title, info, chartData, tableData, barChartData }) {
           <table className="w-full text-sm">
             <thead className="bg-slate-700">
               <tr className="border-b border-slate-600">
-                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">품질항목</th>
-                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">1순위</th>
-                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">2순위</th>
-                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">3순위</th>
-                <th className="px-4 py-2 text-center text-slate-300 font-medium">4순위</th>
+                <th className="px-2 py-1 text-xs text-center text-slate-300 font-medium border-r border-slate-600">품질항목</th>
+                <th className="px-2 py-1 text-xs text-center text-slate-300 font-medium border-r border-slate-600">1순위</th>
+                <th className="px-2 py-1 text-xs text-center text-slate-300 font-medium border-r border-slate-600">2순위</th>
+                <th className="px-2 py-1 text-xs text-center text-slate-300 font-medium border-r border-slate-600">3순위</th>
+                <th className="px-2 py-1 text-xs text-center text-slate-300 font-medium">4순위</th>
               </tr>
             </thead>
             <tbody>
+              <tr className="hover:bg-slate-700/50 transition-colors border-b border-slate-600">
+                {barChartData.map((item, idx) => (
+                  <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
+                    <span className="text-xs text-slate-300">{item.label}</span>
+                  </td>
+                ))}
+              </tr>
+              <tr className="hover:bg-slate-700/50 transition-colors border-b border-slate-600">
+                {barChartData.map((item, idx) => (
+                  <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
+                    <span className="text-xs text-slate-300">-</span>
+                  </td>
+                ))}
+              </tr>
+              <tr className="hover:bg-slate-700/50 transition-colors border-b border-slate-600">
+                {barChartData.map((item, idx) => (
+                  <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
+                    <span className="text-xs text-slate-300">-</span>
+                  </td>
+                ))}
+              </tr>
               <tr className="hover:bg-slate-700/50 transition-colors">
-                {barChartData.map((item, idx) => {
-                  const maxValue = Math.max(...barChartData.map(d => d.value));
-                  const heightPercentage = (item.value / maxValue) * 100;
-                  return (
-                    <td key={idx} className="px-4 py-3 text-center align-bottom border-r border-slate-600 last:border-r-0 relative">
-                      {/* Horizontal grid lines */}
-                      <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                        <div className="border-t border-slate-600/30 w-full"></div>
-                        <div className="border-t border-slate-600/30 w-full"></div>
-                        <div className="border-t border-slate-600/30 w-full"></div>
-                        <div className="border-t border-slate-600/30 w-full"></div>
-                        <div className="border-t border-slate-600/30 w-full"></div>
-                      </div>
-                      <div className="flex flex-col items-center justify-end h-24 relative z-10">
-                        <span className="text-xs text-slate-300 mb-2">{item.value}%</span>
-                        <div 
-                          className={`w-8 rounded-t transition-all ${
-                            idx === 0 ? 'bg-red-500' :
-                            idx === 1 ? 'bg-orange-500' :
-                            idx === 2 ? 'bg-yellow-500' :
-                            'bg-blue-500'
-                          }`}
-                          style={{ height: `${heightPercentage}%` }}
-                        ></div>
-                      </div>
-                    </td>
-                  );
-                })}
+                {barChartData.map((item, idx) => (
+                  <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
+                    <span className="text-xs text-slate-300">-</span>
+                  </td>
+                ))}
               </tr>
             </tbody>
           </table>
