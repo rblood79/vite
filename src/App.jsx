@@ -116,21 +116,14 @@ function Card({ title, info, chartData, tableData, barChartData }) {
               <tr className="hover:bg-slate-700/50 transition-colors border-b border-slate-600">
                 {barChartData.map((item, idx) => (
                   <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
-                    <span className="text-xs text-slate-300">-</span>
-                  </td>
-                ))}
-              </tr>
-              <tr className="hover:bg-slate-700/50 transition-colors border-b border-slate-600">
-                {barChartData.map((item, idx) => (
-                  <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
-                    <span className="text-xs text-slate-300">-</span>
+                    <span className="text-xs text-slate-300">{['A사', 'B사', 'C사', 'D사', 'E사'][idx]}</span>
                   </td>
                 ))}
               </tr>
               <tr className="hover:bg-slate-700/50 transition-colors">
                 {barChartData.map((item, idx) => (
                   <td key={idx} className="px-2 py-1 text-center border-r border-slate-600 last:border-r-0">
-                    <span className="text-xs text-slate-300">-</span>
+                    <span className="text-xs text-slate-300">{['제품1', '제품2', '제품3', '제품4', '제품5'][idx]}</span>
                   </td>
                 ))}
               </tr>
@@ -450,12 +443,12 @@ function App() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 p-4">
       <div className="mx-auto">
         {/* Header */}
-        <div className="mb-4 ml-18">
-          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <div className="mb-2 ml-18">
+          <h1 className="text-2xl font-bold text-white mb-1">Dashboard</h1>
         </div>
 
         {/* Tabs */}
-        <div className="mb-4 ml-18">
+        <div className="mb-2 ml-18">
           <div className="flex gap-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800 shadow-inner">
             {tabs.map((tab) => (
               <button
@@ -1083,6 +1076,200 @@ function App() {
                         </tr>
                       </tbody>
                     </table>
+
+                    {/* 복제된 Trend Cards - 하단 */}
+                    <div className="flex flex-row gap-4 mt-4">
+                      {/* Control & Cards Group */}
+                      <div className="flex flex-col gap-4 flex-3">
+                        {/* Control Group */}
+                        <div className="flex">
+                          <div className="flex items-center gap-4">
+                            <label className="text-sm font-medium text-slate-300 whitespace-nowrap">고객사 선택</label>
+                            <select
+                              value={selectedCustomer}
+                              onChange={(e) => setSelectedCustomer(e.target.value)}
+                              className="bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-600 transition-colors"
+                            >
+                              <option value="All">All</option>
+                              <option value="고객사">고객사</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Trend Cards - 3 columns */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {/* 월 Trend */}
+                          <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                            <div className="bg-slate-700 px-4 py-2">
+                              <h2 className="text-white text-md font-bold">월 Trend</h2>
+                            </div>
+                            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-700">
+                              {/* Chart */}
+                              <div className="h-48 flex items-end justify-between gap-2">
+                                {[
+                                  { date: "11-09", values: [45, 95, 72, 110] },
+                                  { date: "11-10", values: [58, 108, 88, 128] },
+                                  { date: "11-11", values: [52, 102, 80, 122] },
+                                  { date: "11-12", values: [68, 118, 98, 138] },
+                                  { date: "12-11", values: [75, 125, 105, 145] },
+                                  { date: "13-11", values: [82, 132, 112, 152] }
+                                ].map((data, idx) => {
+                                  const maxTotalValue = Math.max(...[
+                                    { date: "11-09", values: [45, 95, 72, 110] },
+                                    { date: "11-10", values: [58, 108, 88, 128] },
+                                    { date: "11-11", values: [52, 102, 80, 122] },
+                                    { date: "11-12", values: [68, 118, 98, 138] },
+                                    { date: "12-11", values: [75, 125, 105, 145] },
+                                    { date: "13-11", values: [82, 132, 112, 152] }
+                                  ].map(d => d.values.reduce((sum, val) => sum + val, 0)));
+                                  const colors = ['bg-sky-400', 'bg-blue-400', 'bg-yellow-400', 'bg-orange-400'];
+                                  return (
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                      <div className="w-full relative h-32 flex items-end">
+                                        <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                                          {data.values.map((val, i) => {
+                                            const percentage = (val / maxTotalValue) * 100;
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
+                                                style={{ height: `${percentage}%` }}
+                                              ></div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                      <span className="text-xs text-slate-400 text-center">{data.date}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 주 Trend */}
+                          <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                            <div className="bg-slate-700 px-4 py-2">
+                              <h2 className="text-white text-md font-bold">주 Trend</h2>
+                            </div>
+                            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-700">
+                              {/* Chart */}
+                              <div className="h-48 flex items-end justify-between gap-2">
+                                {[
+                                  { date: "11-09", values: [40, 88, 65, 105] },
+                                  { date: "11-10", values: [48, 98, 75, 115] },
+                                  { date: "11-11", values: [44, 92, 70, 110] },
+                                  { date: "11-12", values: [56, 105, 82, 122] },
+                                  { date: "12-11", values: [62, 112, 89, 129] },
+                                  { date: "13-11", values: [70, 120, 97, 137] }
+                                ].map((data, idx) => {
+                                  const maxTotalValue = Math.max(...[
+                                    { date: "11-09", values: [40, 88, 65, 105] },
+                                    { date: "11-10", values: [48, 98, 75, 115] },
+                                    { date: "11-11", values: [44, 92, 70, 110] },
+                                    { date: "11-12", values: [56, 105, 82, 122] },
+                                    { date: "12-11", values: [62, 112, 89, 129] },
+                                    { date: "13-11", values: [70, 120, 97, 137] }
+                                  ].map(d => d.values.reduce((sum, val) => sum + val, 0)));
+                                  const colors = ['bg-sky-400', 'bg-blue-400', 'bg-yellow-400', 'bg-orange-400'];
+                                  return (
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                      <div className="w-full relative h-32 flex items-end">
+                                        <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                                          {data.values.map((val, i) => {
+                                            const percentage = (val / maxTotalValue) * 100;
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
+                                                style={{ height: `${percentage}%` }}
+                                              ></div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                      <span className="text-xs text-slate-400 text-center">{data.date}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 일 Trend */}
+                          <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg border border-slate-700">
+                            <div className="bg-slate-700 px-4 py-2">
+                              <h2 className="text-white text-md font-bold">일 Trend</h2>
+                            </div>
+                            <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-700">
+                              {/* Chart */}
+                              <div className="h-48 flex items-end justify-between gap-2">
+                                {[
+                                  { date: "11-09", values: [35, 78, 58, 98] },
+                                  { date: "11-10", values: [42, 85, 65, 105] },
+                                  { date: "11-11", values: [38, 82, 62, 102] },
+                                  { date: "11-12", values: [48, 95, 75, 115] },
+                                  { date: "12-11", values: [54, 102, 82, 122] },
+                                  { date: "13-11", values: [60, 110, 90, 130] }
+                                ].map((data, idx) => {
+                                  const maxTotalValue = Math.max(...[
+                                    { date: "11-09", values: [35, 78, 58, 98] },
+                                    { date: "11-10", values: [42, 85, 65, 105] },
+                                    { date: "11-11", values: [38, 82, 62, 102] },
+                                    { date: "11-12", values: [48, 95, 75, 115] },
+                                    { date: "12-11", values: [54, 102, 82, 122] },
+                                    { date: "13-11", values: [60, 110, 90, 130] }
+                                  ].map(d => d.values.reduce((sum, val) => sum + val, 0)));
+                                  const colors = ['bg-sky-400', 'bg-blue-400', 'bg-yellow-400', 'bg-orange-400'];
+                                  return (
+                                    <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                      <div className="w-full relative h-32 flex items-end">
+                                        <div className="w-full h-full bg-slate-700/50 rounded-t flex flex-col justify-end overflow-hidden">
+                                          {data.values.map((val, i) => {
+                                            const percentage = (val / maxTotalValue) * 100;
+                                            return (
+                                              <div
+                                                key={i}
+                                                className={`w-full transition-opacity hover:opacity-100 opacity-80 ${colors[i % colors.length]}`}
+                                                style={{ height: `${percentage}%` }}
+                                              ></div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                      <span className="text-xs text-slate-400 text-center">{data.date}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* New Div in Parent Group */}
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4 justify-end">
+                          <label className="text-sm font-medium text-slate-300 whitespace-nowrap">기준</label>
+                          <select className="bg-slate-800 text-white border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-600 transition-colors">
+                            <option value="">일자</option>
+                            <option value="">상세</option>
+                          </select>
+                        </div>
+
+                        {/* 통합 범례 */}
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-sky-400 rounded"></div>
+                            <span className="text-sm text-slate-300">xxxx 9.0% (334건)</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-blue-400 rounded"></div>
+                            <span className="text-sm text-slate-300">xxxx 9.0% (334건)</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </>
                 )}
 
