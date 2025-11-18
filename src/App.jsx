@@ -92,35 +92,52 @@ function Card({ title, info, chartData, tableData, barChartData }) {
         </div>
       </div>
 
-      {/* Bar Chart Section (Product Ranking) */}
+      {/* Bar Chart Section (Product Ranking) - Changed to Table */}
       {barChartData && barChartData.length > 0 ? (
-        <div className="px-4 py-4 border-t border-slate-600 bg-slate-750">
-          <div className="flex items-end justify-between gap-2 relative" style={{ height: '8rem' }}>
-            {/* Horizontal Grid Lines */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-              <div className="border-t border-slate-600/30 w-full"></div>
-              <div className="border-t border-slate-600/30 w-full"></div>
-              <div className="border-t border-slate-600/30 w-full"></div>
-              <div className="border-t border-slate-600/30 w-full"></div>
-            </div>
-            
-            {barChartData.map((item, idx) => {
-              const maxValue = Math.max(...barChartData.map(d => d.value));
-              const percentage = (item.value / maxValue) * 100;
-              return (
-                <div key={idx} className="flex flex-col items-center flex-1 pt-6 pb-0 relative z-10">
-                  <span className="text-xs text-slate-300 mb-1 flex-shrink-0">{item.value}%</span>
-                  <div className="w-1/2 bg-slate-600 rounded-t flex items-end justify-center overflow-hidden" style={{ height: `${percentage * 3}px`, maxHeight: '60px' }}>
-                    <div
-                      className={`w-full ${item.color} transition-all`}
-                      style={{ height: '100%' }}
-                    ></div>
-                  </div>
-                  <span className="text-xs text-slate-300 mt-1 truncate w-full text-center flex-shrink-0">{item.label}</span>
-                </div>
-              );
-            })}
-          </div>
+        <div className="bg-slate-700/50 border-t border-slate-600">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-700">
+              <tr className="border-b border-slate-600">
+                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">품질항목</th>
+                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">1순위</th>
+                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">2순위</th>
+                <th className="px-4 py-2 text-center text-slate-300 font-medium border-r border-slate-600">3순위</th>
+                <th className="px-4 py-2 text-center text-slate-300 font-medium">4순위</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="hover:bg-slate-700/50 transition-colors">
+                {barChartData.map((item, idx) => {
+                  const maxValue = Math.max(...barChartData.map(d => d.value));
+                  const heightPercentage = (item.value / maxValue) * 100;
+                  return (
+                    <td key={idx} className="px-4 py-3 text-center align-bottom border-r border-slate-600 last:border-r-0 relative">
+                      {/* Horizontal grid lines */}
+                      <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
+                        <div className="border-t border-slate-600/30 w-full"></div>
+                        <div className="border-t border-slate-600/30 w-full"></div>
+                        <div className="border-t border-slate-600/30 w-full"></div>
+                        <div className="border-t border-slate-600/30 w-full"></div>
+                        <div className="border-t border-slate-600/30 w-full"></div>
+                      </div>
+                      <div className="flex flex-col items-center justify-end h-32 relative z-10">
+                        <span className="text-xs text-slate-300 mb-2">{item.value}%</span>
+                        <div 
+                          className={`w-8 rounded-t transition-all ${
+                            idx === 0 ? 'bg-red-500' :
+                            idx === 1 ? 'bg-orange-500' :
+                            idx === 2 ? 'bg-yellow-500' :
+                            'bg-blue-500'
+                          }`}
+                          style={{ height: `${heightPercentage}%` }}
+                        ></div>
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
         </div>
       ) : (
         <div className="bg-slate-700/50 border-t border-slate-600">
@@ -200,7 +217,7 @@ function App() {
   const cardConfigs = [
     {
       id: 1,
-      title: "OCP Rate",
+      title: "GR",
       info: [
         {
           label: "누적", title1: "OCP Rate", value1: "50%",
@@ -220,11 +237,11 @@ function App() {
         { date: "14-15", values: [92, 142, 122, 162] }
       ],
       barChartData: [
-        { label: "품질항목", value: 85, color: "bg-blue-600" },
-        { label: "1순위", value: 92, color: "bg-blue-500" },
-        { label: "2순위", value: 78, color: "bg-blue-400" },
-        { label: "3순위", value: 65, color: "bg-blue-300" },
-        { label: "4순위", value: 51, color: "bg-blue-200" }
+        { label: "OCP Rate", value: 85, color: "bg-slate-500" },
+        { label: "Product A", value: 92, color: "bg-red-500" },
+        { label: "Product B", value: 67, color: "bg-orange-500" },
+        { label: "Product C", value: 43, color: "bg-yellow-500" },
+        { label: "Product D", value: 18, color: "bg-blue-500" }
       ],
       tableData: [
         { label: "제품명", value: "STML283T" },
@@ -233,7 +250,7 @@ function App() {
     },
     {
       id: 2,
-      title: "OCP",
+      title: "SHP",
       info: [
         {
           label: "누적", title1: "OCP", value1: "58%",
@@ -253,11 +270,11 @@ function App() {
         { date: "14-15", values: [80, 120, 100, 140] }
       ],
       barChartData: [
-        { label: "품질항목", value: 84, color: "bg-sky-400" },
-        { label: "1순위", value: 91, color: "bg-blue-400" },
-        { label: "2순위", value: 79, color: "bg-yellow-400" },
-        { label: "3순위", value: 67, color: "bg-orange-400" },
-        { label: "4순위", value: 55, color: "bg-green-400" }
+        { label: "Defect", value: 76, color: "bg-slate-500" },
+        { label: "Unit 1", value: 91, color: "bg-red-500" },
+        { label: "Unit 2", value: 73, color: "bg-orange-500" },
+        { label: "Unit 3", value: 47, color: "bg-yellow-500" },
+        { label: "Unit 4", value: 21, color: "bg-blue-500" }
       ],
       tableData: [
         { label: "제품명", value: "STML283T" },
@@ -266,7 +283,7 @@ function App() {
     },
     {
       id: 3,
-      title: "Quality Score",
+      title: "POL",
       info: [
         {
           label: "누적", title1: "Quality Score", value1: "92%",
@@ -286,11 +303,11 @@ function App() {
         { date: "14-15", values: [91, 140, 124, 172] }
       ],
       barChartData: [
-        { label: "품질항목", value: 94, color: "bg-sky-400" },
-        { label: "1순위", value: 97, color: "bg-blue-400" },
-        { label: "2순위", value: 89, color: "bg-yellow-400" },
-        { label: "3순위", value: 83, color: "bg-orange-400" },
-        { label: "4순위", value: 76, color: "bg-green-400" }
+        { label: "Quality", value: 90, color: "bg-slate-500" },
+        { label: "Model 1", value: 95, color: "bg-red-500" },
+        { label: "Model 2", value: 78, color: "bg-orange-500" },
+        { label: "Model 3", value: 52, color: "bg-yellow-500" },
+        { label: "Model 4", value: 26, color: "bg-blue-500" }
       ],
       tableData: [
         { label: "제품명", value: "EDGE" },
@@ -299,7 +316,7 @@ function App() {
     },
     {
       id: 4,
-      title: "Yield Rate",
+      title: "CL",
       info: [
         {
           label: "누적", title1: "Yield Rate", value1: "87%",
@@ -332,7 +349,7 @@ function App() {
     },
     {
       id: 5,
-      title: "Defect Rate",
+      title: "EPI",
       info: [
         {
           label: "누적", title1: "Defect Rate", value1: "2.3%",
@@ -352,11 +369,11 @@ function App() {
         { date: "14-15", values: [44, 84, 64, 104] }
       ],
       barChartData: [
-        { label: "품질항목", value: 87, color: "bg-sky-400" },
-        { label: "1순위", value: 91, color: "bg-blue-400" },
-        { label: "2순위", value: 83, color: "bg-yellow-400" },
-        { label: "3순위", value: 74, color: "bg-orange-400" },
-        { label: "4순위", value: 62, color: "bg-green-400" }
+        { label: "Yield", value: 82, color: "bg-slate-500" },
+        { label: "Type A", value: 84, color: "bg-red-500" },
+        { label: "Type B", value: 61, color: "bg-orange-500" },
+        { label: "Type C", value: 38, color: "bg-yellow-500" },
+        { label: "Type D", value: 17, color: "bg-blue-500" }
       ],
       tableData: [
         { label: "제품명", value: "PREMIUM" },
@@ -365,7 +382,7 @@ function App() {
     },
     {
       id: 6,
-      title: "Efficiency",
+      title: "MI",
       info: [
         {
           label: "누적", title1: "Efficiency", value1: "96.5%",
@@ -385,11 +402,11 @@ function App() {
         { date: "14-15", values: [98, 138, 123, 173] }
       ],
       barChartData: [
-        { label: "품질항목", value: 95, color: "bg-sky-400" },
-        { label: "1순위", value: 98, color: "bg-blue-400" },
-        { label: "2순위", value: 92, color: "bg-yellow-400" },
-        { label: "3순위", value: 86, color: "bg-orange-400" },
-        { label: "4순위", value: 79, color: "bg-green-400" }
+        { label: "Efficiency", value: 93, color: "bg-slate-500" },
+        { label: "Batch A", value: 97, color: "bg-red-500" },
+        { label: "Batch B", value: 82, color: "bg-orange-500" },
+        { label: "Batch C", value: 59, color: "bg-yellow-500" },
+        { label: "Batch D", value: 33, color: "bg-blue-500" }
       ],
       tableData: [
         { label: "제품명", value: "STANDARD" },
