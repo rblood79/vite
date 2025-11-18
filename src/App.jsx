@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 // Card Component
@@ -120,7 +120,7 @@ function Card({ title, info, chartData, tableData, barChartData }) {
                         <div className="border-t border-slate-600/30 w-full"></div>
                         <div className="border-t border-slate-600/30 w-full"></div>
                       </div>
-                      <div className="flex flex-col items-center justify-end h-32 relative z-10">
+                      <div className="flex flex-col items-center justify-end h-24 relative z-10">
                         <span className="text-xs text-slate-300 mb-2">{item.value}%</span>
                         <div 
                           className={`w-8 rounded-t transition-all ${
@@ -198,6 +198,39 @@ function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [activeCardTab, setActiveCardTab] = useState(0);
   const [selectedCustomer, setSelectedCustomer] = useState('All');
+  const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
+
+  const alerts = [
+    {
+      title: "Alert: System Notification",
+      message: "Quality Score threshold exceeded. Immediate action required on EDGE product line."
+    },
+    {
+      title: "Warning: Performance Issue",
+      message: "Production line efficiency dropped below 85%. Check equipment status immediately."
+    },
+    {
+      title: "Alert: Material Shortage",
+      message: "Raw material inventory critical. Order replenishment required within 24 hours."
+    },
+    {
+      title: "Notice: Maintenance Required",
+      message: "Scheduled maintenance for Line 3 equipment due in 48 hours. Prepare backup resources."
+    },
+    {
+      title: "Alert: Quality Deviation",
+      message: "Defect rate increased by 15% in the last 4 hours. Investigate production parameters."
+    }
+  ];
+
+  // Alert rotation effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentAlertIndex((prev) => (prev + 1) % alerts.length);
+    }, 6000); // 5초마다 로테이션
+
+    return () => clearInterval(interval);
+  }, [alerts.length]);
 
   const tabs = [
     { id: 0, name: 'Summary' },
@@ -466,18 +499,26 @@ function App() {
                 </div>
               </div>
               <div className="flex-1">
-                <div className="mb-4 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-red-700/50 rounded-xl p-4 flex items-center gap-4">
-                  <div className="text-2xl">⚠️</div>
-                  <div className="flex-1">
-                    <h3 className="text-red-300 font-semibold mb-1">Alert: System Notification</h3>
-                    <p className="text-red-200/80 text-sm">Quality Score threshold exceeded. Immediate action required on EDGE product line.</p>
+                <div className="mb-4 bg-gradient-to-r from-red-950/40 to-orange-950/40 border border-red-700/50 rounded-xl p-4 overflow-hidden relative h-20 flex items-start">
+                  <div 
+                    className="transition-transform duration-500 ease-in-out w-full"
+                    style={{ transform: `translateY(-${currentAlertIndex * 80}px)` }}
+                  >
+                    {alerts.map((alert, index) => (
+                      <div key={index} className="h-20 flex items-start justify-start">
+                        <div className="flex-1">
+                          <h3 className="text-red-300 font-semibold mb-1">{alert.title}</h3>
+                          <p className="text-red-200/80 text-sm">{alert.message}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
                 {/* Card Tab Content */}
                 {activeCardTab === 0 && (
                   <>
                     {/* Cards Grid - 2 columns (xl and below), 3 columns (2xl and above) */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-3 gap-4">
                       {cardConfigs.map((config) => (
                         <Card
                           key={config.id}
