@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 // Card Component
-function Card({ title, info, chartData, tableData, barChartData, isDarkMode }) {
+function Card({ title, info, chartData, tableData, barChartData, isDarkMode, onTableClick }) {
   const isDark = isDarkMode;
+  const cardRef = useRef(null);
   const theme = {
     card: isDark ? 'bg-slate-800' : 'bg-white',
     cardBorder: isDark ? 'border-slate-700' : 'border-gray-300',
@@ -18,8 +19,23 @@ function Card({ title, info, chartData, tableData, barChartData, isDarkMode }) {
     tableHover: isDark ? 'hover:bg-slate-700' : 'hover:bg-gray-200',
   };
 
+  const handleTableClick = () => {
+    if (cardRef.current && onTableClick) {
+      const rect = cardRef.current.getBoundingClientRect();
+      onTableClick({
+        title,
+        info,
+        chartData,
+        tableData,
+        barChartData,
+        cardWidth: rect.width,
+        cardHeight: rect.height,
+      });
+    }
+  };
+
   return (
-    <div className={`${theme.card} rounded-xl overflow-hidden shadow-lg border ${theme.cardBorder} hover:shadow-xl transition-shadow`}>
+    <div ref={cardRef} className={`${theme.card} rounded-xl overflow-hidden shadow-lg border ${theme.cardBorder} hover:shadow-xl transition-shadow`}>
       {/* Card Title */}
       <div className={`${theme.header} px-4 py-1`}>
         <h2 className={`${theme.text} text-md font-bold`}>{title}</h2>
@@ -109,7 +125,7 @@ function Card({ title, info, chartData, tableData, barChartData, isDarkMode }) {
 
       {/* Bar Chart Section (Product Ranking) - Changed to Table */}
       {barChartData && barChartData.length > 0 ? (
-        <div className={isDark ? 'bg-slate-800' : 'bg-gray-100 border-t border-gray-300'}>
+        <div className={isDark ? 'bg-slate-800' : 'bg-gray-100 border-t border-gray-300'} onClick={handleTableClick} style={{ cursor: 'pointer' }}>
           <table className="w-full text-sm">
             <thead className={theme.header}>
               <tr className={`border-b ${theme.cardBorder}`}>
@@ -146,7 +162,7 @@ function Card({ title, info, chartData, tableData, barChartData, isDarkMode }) {
           </table>
         </div>
       ) : (
-        <div className={isDark ? 'bg-slate-700' : 'bg-gray-200 border-t border-gray-300'}>
+        <div className={isDark ? 'bg-slate-700' : 'bg-gray-200 border-t border-gray-300'} onClick={handleTableClick} style={{ cursor: 'pointer' }}>
           <table className="w-full text-sm">
             <tbody>
               {tableData.map((row, idx) => (
@@ -199,6 +215,7 @@ Card.propTypes = {
     })
   ),
   isDarkMode: PropTypes.bool.isRequired,
+  onTableClick: PropTypes.func,
 };
 
 function App() {
@@ -207,6 +224,7 @@ function App() {
   const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
   const [isDarkMode, setIsDarkMode] = useState(false); // 테마 상태
   const [selectedCustomer, setSelectedCustomer] = useState('All');
+  const [popupData, setPopupData] = useState(null);
 
   const alerts = [
     {
@@ -490,13 +508,21 @@ function App() {
           <h1 className={`text-2xl font-bold ${theme.headerText} mb-1`}>Dashboard</h1>
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`px-4 py-1 rounded-lg font-small transition-all ${
+            className={`flex items-center justify-center rounded-full transition-all ${
               isDarkMode 
-                ? 'bg-yellow-500 text-slate-900 hover:bg-yellow-400' 
-                : 'bg-gray-800 text-white hover:bg-gray-700'
+                ? 'bg-yellow-500 hover:bg-yellow-400' 
+                : 'bg-gray-800 hover:bg-gray-700'
             }`}
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '14px',
+              width: '24px',
+              height: '24px'
+            }}
           >
-            {isDarkMode ? '☀️ Light' : '🌙 Dark'}
+            {isDarkMode ? '☀️' : '🌙'}
           </button>
         </div>
 
@@ -570,6 +596,7 @@ function App() {
                         tableData={config.tableData}
                         barChartData={config.barChartData}
                         isDarkMode={isDarkMode}
+                        onTableClick={setPopupData}
                       />
                     ))}
                   </div>
@@ -1330,6 +1357,181 @@ function App() {
             </div>
           )
         ))}
+
+        {/* Popup Modal */}
+        {popupData && (
+          <div 
+            className="fixed inset-0 bg-black/20 flex items-center justify-center z-50"
+            onClick={() => setPopupData(null)}
+          >
+            <div 
+              className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} rounded-xl overflow-hidden shadow-2xl border ${isDarkMode ? 'border-slate-700' : 'border-gray-300'} relative`}
+              style={{
+                width: `${popupData.cardWidth * 2}px`,
+                height: '580px',
+                maxWidth: '90vw',
+                maxHeight: '90vh',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Card Title */}
+              <div className={`${isDarkMode ? 'bg-slate-700' : 'bg-gray-200'} py-2 flex items-center justify-between`} style={{ paddingLeft: '1rem', paddingRight: 'var(--spacing)' }}>
+                <h2 className={`${isDarkMode ? 'text-white' : 'text-gray-900'} text-lg font-bold`}>{popupData.title}</h2>
+                <div className="flex items-center gap-2 px-1">
+                  <select className={`${isDarkMode ? 'bg-slate-800 text-white border-slate-700' : 'bg-gray-50 text-gray-900 border-gray-300'} border rounded px-2 py-1 text-sm`}>
+                    <option value="항목별/전체">항목별/전체</option>
+                    <option value="LIST">LIST</option>
+                    <option value="Flat">Flat</option>
+                    <option value="Namo">Namo</option>
+                    <option value="EBIS">EBIS</option>
+                  </select>
+                  <button
+                    onClick={() => setPopupData(null)}
+                    className={`w-6 h-6 flex items-center justify-center rounded-full ${isDarkMode ? 'bg-slate-600 hover:bg-slate-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-800'} transition-colors`}
+                    style={{ width: '24px', height: '24px' }}
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              {/* Line Charts Section - 4 columns */}
+              <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white'} px-4 pt-4 pb-4`} style={{ height: 'calc(580px - 80px)' }}>
+                <div className="grid grid-cols-4 gap-4 h-full">
+                  {[1, 2, 3, 4].map((chartIdx) => {
+                    // Sample data for line chart
+                    const chartData = popupData.chartData || [
+                      { date: "11-09", values: [45, 95, 72, 110] },
+                      { date: "11-10", values: [58, 108, 88, 128] },
+                      { date: "11-11", values: [52, 102, 80, 122] },
+                      { date: "11-12", values: [68, 118, 98, 138] },
+                      { date: "12-11", values: [75, 125, 105, 145] },
+                      { date: "13-11", values: [82, 132, 112, 152] },
+                      { date: "14-11", values: [88, 138, 118, 158] },
+                      { date: "14-15", values: [92, 142, 122, 162] }
+                    ];
+                    
+                    // Get values for this chart (use different data series for each chart)
+                    const values = chartData.map(d => d.values[chartIdx - 1] || d.values[0]);
+                    const maxValue = Math.max(...values);
+                    const minValue = Math.min(...values);
+                    const range = maxValue - minValue || 1;
+                    
+                    // Calculate points for line chart
+                    const width = 200;
+                    const height = 150;
+                    const padding = 20;
+                    const chartWidth = width - padding * 2;
+                    const chartHeight = height - padding * 2;
+                    
+                    const points = values.map((val, idx) => {
+                      const x = padding + (idx / (values.length - 1)) * chartWidth;
+                      const y = padding + chartHeight - ((val - minValue) / range) * chartHeight;
+                      return `${x},${y}`;
+                    }).join(' ');
+                    
+                    return (
+                      <div key={chartIdx} className={`${isDarkMode ? 'bg-slate-700' : 'bg-gray-100'} rounded-lg p-3 border ${isDarkMode ? 'border-slate-600' : 'border-gray-300'}`}>
+                        <h3 className={`text-sm font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                          Chart {chartIdx}
+                        </h3>
+                        <div className="relative" style={{ width: '100%', height: '150px' }}>
+                          <svg width="100%" height="150" viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+                            {/* Grid lines */}
+                            {[0, 0.25, 0.5, 0.75, 1].map((ratio) => (
+                              <line
+                                key={ratio}
+                                x1={padding}
+                                y1={padding + ratio * chartHeight}
+                                x2={width - padding}
+                                y2={padding + ratio * chartHeight}
+                                stroke={isDarkMode ? '#475569' : '#e5e7eb'}
+                                strokeWidth="1"
+                                strokeDasharray="2,2"
+                              />
+                            ))}
+                            
+                            {/* Line chart */}
+                            <polyline
+                              points={points}
+                              fill="none"
+                              stroke={chartIdx === 1 ? '#0ea5e9' : chartIdx === 2 ? '#3b82f6' : chartIdx === 3 ? '#eab308' : '#f97316'}
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            
+                            {/* Data points */}
+                            {values.map((val, idx) => {
+                              const x = padding + (idx / (values.length - 1)) * chartWidth;
+                              const y = padding + chartHeight - ((val - minValue) / range) * chartHeight;
+                              return (
+                                <circle
+                                  key={idx}
+                                  cx={x}
+                                  cy={y}
+                                  r="3"
+                                  fill={chartIdx === 1 ? '#0ea5e9' : chartIdx === 2 ? '#3b82f6' : chartIdx === 3 ? '#eab308' : '#f97316'}
+                                />
+                              );
+                            })}
+                            
+                            {/* X-axis labels */}
+                            {chartData.map((d, idx) => {
+                              if (idx % 2 === 0) {
+                                const x = padding + (idx / (values.length - 1)) * chartWidth;
+                                return (
+                                  <text
+                                    key={idx}
+                                    x={x}
+                                    y={height - 5}
+                                    textAnchor="middle"
+                                    fontSize="10"
+                                    fill={isDarkMode ? '#94a3b8' : '#6b7280'}
+                                  >
+                                    {d.date}
+                                  </text>
+                                );
+                              }
+                              return null;
+                            })}
+                          </svg>
+                        </div>
+                        
+                        {/* Table below chart */}
+                        <div className="w-full mt-2">
+                          <table className="w-full text-xs">
+                            <thead>
+                              <tr className={`border-b ${isDarkMode ? 'border-slate-600' : 'border-gray-300'}`}>
+                                <th className={`px-2 py-1 text-left ${isDarkMode ? 'text-slate-300' : 'text-gray-700'} font-medium`}>항목</th>
+                                <th className={`px-2 py-1 text-right ${isDarkMode ? 'text-slate-300' : 'text-gray-700'} font-medium`}>값</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {[
+                                { label: '항목1', value: '100' },
+                                { label: '항목2', value: '200' },
+                                { label: '항목3', value: '300' },
+                                { label: '항목4', value: '400' },
+                                { label: '항목5', value: '500' },
+                                { label: '항목6', value: '600' }
+                              ].map((row, rowIdx) => (
+                                <tr key={rowIdx} className={`border-b ${isDarkMode ? 'border-slate-600' : 'border-gray-300'} last:border-b-0`}>
+                                  <td className={`px-2 py-1 ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>{row.label}</td>
+                                  <td className={`px-2 py-1 text-right ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>{row.value}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
